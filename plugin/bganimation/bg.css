@@ -4,7 +4,7 @@
  //.cb-slideshow li:nth-child(4) span { background-image: url('https://ws4.sinaimg.cn/large/005ODKsIgw1fajzncs9apj31hc11x0yw.jpg');}
  //.cb-slideshow li:nth-child(5) span { background-image: url('https://s2.ax1x.com/2019/07/15/ZTJaZQ.jpg');}
  //.cb-slideshow li:nth-child(6) span { background-image: url('https://ws1.sinaimg.cn/large/005ODKsIgw1fam1v0u0n0j31hc0xcjxc.jpg');}
- 
+
  .cb-slideshow li:nth-child(1) span { background-image: url('https://s2.ax1x.com/2019/07/15/ZTJ5J1.jpg');}
  .cb-slideshow li:nth-child(2) span { background-image: url('https://ws2.sinaimg.cn/large/005ODKsIgw1fakb435nz6j31hc0u079l.jpg');}
  .cb-slideshow li:nth-child(3) span { background-image: url('https://s2.ax1x.com/2019/07/15/ZTYNSx.png');}
@@ -22,8 +22,8 @@
 }
 .cb-slideshow, .cb-slideshow:after {
     position: fixed;
-    width: 100%;
-    height: 100%;
+    width: 90%;
+    height: 90%;
     top: 0px;
     left: 0px;
 }
