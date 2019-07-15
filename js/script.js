@@ -1,5 +1,54 @@
 (function($){
   // Search
+  var html1 = ['<div class="wrap1" style="float:right;position:fixed;top:30px;right:20px;">',
+        '<div class="cube">',
+            '<div class="out_front">',
+                '<img src="https://s2.ax1x.com/2019/07/15/ZTZzut.png" class="pic">',
+            '</div>',
+            '<div class="out_back">',
+                '<img src="https://s2.ax1x.com/2019/07/15/ZTeVvn.png" class="pic">',
+            '</div>',
+
+            '<div class="out_left">',
+                '<img src="https://s2.ax1x.com/2019/07/15/ZTmL6A.png" class="pic">',
+            '</div>',
+
+            '<div class="out_right">',
+                '<img src="https://s2.ax1x.com/2019/07/15/ZTmv0P.png" class="pic">',
+            '</div>',
+
+            '<div class="out_top">',
+                '<img src="https://s2.ax1x.com/2019/07/15/ZTnPpQ.png" class="pic">',
+            '</div>',
+
+            '<div class="out_bottom">',
+                '<img src="https://s2.ax1x.com/2019/07/15/ZTnV00.png" class="pic">',
+            '</div>',
+ 
+         
+            '<span class="in_front">',
+                '<img src="https://s2.ax1x.com/2019/07/15/ZTnJ76.jpg" class="in_pic">',
+            '</span>',
+            '<span class="in_back">',
+                 '<img src="https://s2.ax1x.com/2019/07/15/ZTnw1H.png" class="in_pic">',
+            '</span>',
+            '<span class="in_left">',
+                '<img src="https://s2.ax1x.com/2019/07/15/ZTn0cd.png" class="in_pic">',
+            '</span>',
+            '<span class="in_right">',
+                '<img src="https://s2.ax1x.com/2019/07/15/ZTnW9g.jpg" class="in_pic">',
+            '</span>',
+            '<span class="in_top">',
+                '<img src="https://s2.ax1x.com/2019/07/15/ZTnIun.png" class="in_pic">',
+            '</span>',
+            '<span class="in_bottom">',
+                '<img src="https://s2.ax1x.com/2019/07/15/ZTnoBq.jpg" class="in_pic">',
+            '</span>',
+        '</div>',
+ 
+    '</div>'].join('');
+      var box1 = $(html1);
+      $('body').append(box1);
   var $searchWrap = $('#search-form-wrap'),
     isSearchAnim = false,
     searchAnimDuration = 200;
@@ -135,3 +184,4 @@
     $container.removeClass('mobile-nav-on');
   });
 })(jQuery);
+
