@@ -1,4 +1,4 @@
-(function($){
+/*(function($){
   // Search
   var html1 = ['<div class="wrap1" style="float:right;position:fixed;top:30px;right:20px;">',
         '<div class="cube">',
@@ -46,9 +46,71 @@
             '</span>',
         '</div>',
  
+    '</div>','<canvas id="heart"></canvas>'].join('');
+      var box1 = $(html1);
+      $('body').append(box1);
+      */
+
+(function($){
+  // Search
+  var html1 = ['<div class="wrap1" style="float:right;position:fixed;top:30px;right:20px;">',
+        '<div class="cube">',
+            '<div class="out_front">',
+                '<img src="/css/images/1.png" class="pic">',
+            '</div>',
+            '<div class="out_back">',
+                '<img src="/css/images/2.png" class="pic">',
+            '</div>',
+
+            '<div class="out_left">',
+                '<img src="/css/images/3.png" class="pic">',
+            '</div>',
+
+            '<div class="out_right">',
+                '<img src="/css/images/4.png" class="pic">',
+            '</div>',
+
+            '<div class="out_top">',
+                '<img src="/css/images/5.png" class="pic">',
+            '</div>',
+
+            '<div class="out_bottom">',
+                '<img src="/css/images/6.png" class="pic">',
+            '</div>',
+ 
+         
+            '<span class="in_front">',
+                '<img src="/css/images/7.jpg" class="in_pic">',
+            '</span>',
+            '<span class="in_back">',
+                 '<img src="/css/images/8.png" class="in_pic">',
+            '</span>',
+            '<span class="in_left">',
+                '<img src="/css/images/9.png" class="in_pic">',
+            '</span>',
+            '<span class="in_right">',
+                '<img src="/css/images/10.jpg" class="in_pic">',
+            '</span>',
+            '<span class="in_top">',
+                '<img src="/css/images/11.png" class="in_pic">',
+            '</span>',
+            '<span class="in_bottom">',
+                '<img src="/css/images/12.jpg" class="in_pic">',
+            '</span>',
+        '</div>',
+ 
     '</div>'].join('');
       var box1 = $(html1);
       $('body').append(box1);
+
+
+
+var s = document.readyState;
+if (s === 'complete' || s === 'loaded' || s === 'interactive') init();
+else document.addEventListener('DOMContentLoaded', init, false);
+
+
+
   var $searchWrap = $('#search-form-wrap'),
     isSearchAnim = false,
     searchAnimDuration = 200;
