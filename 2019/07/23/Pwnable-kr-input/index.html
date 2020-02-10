@@ -17,7 +17,7 @@
 <meta property="og:site_name" content="Ordin">
 <meta property="og:description" content="info源码如下">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-02-10T12:19:47.113Z">
+<meta property="og:updated_time" content="2020-02-10T12:20:39.368Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Pwnable.kr——input">
 <meta name="twitter:description" content="info源码如下">
@@ -269,7 +269,7 @@
 
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">首先fork()创建的进程(&quot;即当前的进程的镜像&quot;),两者的初始状态一样，执行互不干扰。</span><br><span class="line">另外fork() 复制程序时不是从** #include **处开始复制的，因为fork是把进程当前的情况拷贝一份，所以执行fork()，前面的已经执行完了，fork()只拷贝下一行代码到新进程。</span><br><span class="line"></span><br><span class="line">pipe(int fd[2])函数可以得到两个file descriptors 形成一个单向的pipe,fd[0]固定为读端，fd[1]固定为写端。</span><br><span class="line"></span><br><span class="line">另外 execv家族有很多，其中的execve()可以控制传进去的envp,env</span><br><span class="line">int execve(const char *filename, char *const argv[ ], char *const envp[ ]);</span><br></pre></td></tr></table></figure>
 
-<p>[pipe]<a href="http://unixwiz.net/techtips/remap-pipe-fds.html" target="_blank" rel="noopener">http://unixwiz.net/techtips/remap-pipe-fds.html</a></p>
+<p><a href="http://unixwiz.net/techtips/remap-pipe-fds.html" target="_blank" rel="noopener">pipe</a></p>
 
       
     </div>
@@ -281,7 +281,7 @@
         <p><span>本文标题:</span><a  href="/2019/07/23/Pwnable-kr-input/">Pwnable.kr——input</a></p>
         <p><span>文章作者:</span><a  href="/" title="访问 Ordin 的个人博客">Ordin</a></p>
         <p><span>发布时间:</span>2019年07月23日 - 19时55分</p>
-        <p><span>最后更新:</span>2020年02月10日 - 20时19分</p>
+        <p><span>最后更新:</span>2020年02月10日 - 20时20分</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2019/07/23/Pwnable-kr-input/" title="Pwnable.kr——input">https://leave-Devour.github.io/2019/07/23/Pwnable-kr-input/</a>
             <span class="copy-path" data-clipboard-text="原文: https://leave-Devour.github.io/2019/07/23/Pwnable-kr-input/　　作者: Ordin" title=""></span>
