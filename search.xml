@@ -4,7 +4,7 @@
   
     
     <entry>
-      <title>reversing.kr-Easy_crack</title>
+      <title>Easy_crack</title>
       <link href="/2019/07/23/%C2%96%C2%96reversing-kr-Easy-crack/"/>
       <url>/2019/07/23/%C2%96%C2%96reversing-kr-Easy-crack/</url>
       
@@ -13,14 +13,14 @@
       
       <categories>
           
-          <category> RE reversing.kr </category>
+          <category> reversing.kr </category>
           
       </categories>
       
       
         <tags>
             
-            <tag> window逆向 </tag>
+            <tag> RE </tag>
             
         </tags>
       
@@ -29,7 +29,7 @@
     
     
     <entry>
-      <title>Pwnable.kr-input</title>
+      <title>input</title>
       <link href="/2019/07/23/Pwnable-kr-input/"/>
       <url>/2019/07/23/Pwnable-kr-input/</url>
       
@@ -38,7 +38,7 @@
       
       <categories>
           
-          <category> ctf Pwnable.kr </category>
+          <category> Pwnable.kr </category>
           
       </categories>
       
