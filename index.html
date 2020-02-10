@@ -359,10 +359,194 @@
 
 
   
+    <article id="post-Pwnable-kr-input" class="article article-type-post" itemscope itemprop="blogPost">
   
-    <nav id="page-nav">
-      <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
-    </nav>
+    <div class="article-meta">
+      <a  href="/2019/07/23/Pwnable-kr-input/" class="article-date">
+      <time datetime="2019-07-23T11:55:39.000Z" itemprop="datePublished">2019-07-23</time>
+</a>
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a  class="article-title" href="/2019/07/23/Pwnable-kr-input/">Pwnable.kr——input</a>
+    </h1>
+  
+
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <h2 id="放出源码"><a href="#放出源码" class="headerlink" title="放出源码"></a>放出源码</h2><pre><code>#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+#include &lt;sys/socket.h&gt;
+#include &lt;arpa/inet.h&gt;
+
+int main(int argc, char* argv[], char* envp[]){
+    printf(&quot;Welcome to pwnable.kr\n&quot;);
+    printf(&quot;Let&apos;s see if you know how to give input to program\n&quot;);
+    printf(&quot;Just give me correct inputs then you will get the flag :)\n&quot;);
+
+    //argc
+    if(argc != 100) return 0;
+    if(strcmp(argv[&apos;A&apos;],&quot;\x00&quot;)) return 0;
+    if(strcmp(argv[&apos;B&apos;],&quot;\x20\x0a\x0d&quot;)) return 0;
+    printf(&quot;Stage 1 clear!\n&quot;);    
+
+    // stdio
+    char buf[4];
+    read(0, buf, 4);
+    if(memcmp(buf, &quot;\x00\x0a\x00\xff&quot;, 4)) return 0;
+    read(2, buf, 4);
+        if(memcmp(buf, &quot;\x00\x0a\x02\xff&quot;, 4)) return 0;
+    printf(&quot;Stage 2 clear!\n&quot;);
+
+    // env
+    if(strcmp(&quot;\xca\xfe\xba\xbe&quot;, getenv(&quot;\xde\xad\xbe\xef&quot;))) return 0;
+    printf(&quot;Stage 3 clear!\n&quot;);
+
+    // file
+    FILE* fp = fopen(&quot;\x0a&quot;, &quot;r&quot;);
+    if(!fp) return 0;
+    if( fread(buf, 4, 1, fp)!=1 ) return 0;
+    if( memcmp(buf, &quot;\x00\x00\x00\x00&quot;, 4) ) return 0;
+    fclose(fp);
+    printf(&quot;Stage 4 clear!\n&quot;);    
+
+    // network
+    int sd, cd;
+    struct sockaddr_in saddr, caddr;
+    sd = socket(AF_INET, SOCK_STREAM, 0);
+    if(sd == -1){
+        printf(&quot;socket error, tell admin\n&quot;);
+        return 0;
+    }
+    saddr.sin_family = AF_INET;
+    saddr.sin_addr.s_addr = INADDR_ANY;
+    saddr.sin_port = htons( atoi(argv[&apos;C&apos;]) );
+    if(bind(sd, (struct sockaddr*)&amp;saddr, sizeof(saddr)) &lt; 0){
+        printf(&quot;bind error, use another port\n&quot;);
+            return 1;
+    }
+    listen(sd, 1);
+    int c = sizeof(struct sockaddr_in);
+    cd = accept(sd, (struct sockaddr *)&amp;caddr, (socklen_t*)&amp;c);
+    if(cd &lt; 0){
+        printf(&quot;accept error, tell admin\n&quot;);
+        return 0;
+    }
+    if( recv(cd, buf, 4, 0) != 4 ) return 0;
+    if(memcmp(buf, &quot;\xde\xad\xbe\xef&quot;, 4)) return 0;
+    printf(&quot;Stage 5 clear!\n&quot;);
+
+    // here&apos;s your flag
+    system(&quot;/bin/cat flag&quot;);    
+    return 0;</code></pre><p>}</p>
+<p>—可以看出前面有5个地方需要绕过的。</p>
+<pre><code>1：就是argc和argv
+2：stdin和stderr
+3：env
+4：存在文件\x0a 
+5：socket通信</code></pre><h3 id="记录下一些get到的知识点"><a href="#记录下一些get到的知识点" class="headerlink" title="记录下一些get到的知识点"></a>记录下一些get到的知识点</h3><pre><code>1、用pipe创建管道，试两个进程间进行通信
+2、用fork创建进程</code></pre><hr>
+<pre><code>int writepipe[2] = {-1,-1}, /* parent -&gt; child */
+    readpipe [2] = {-1,-1}; /* child -&gt; parent */
+pid_t   childpid;
+
+/*------------------------------------------------------------------------
+ * CREATE THE PAIR OF PIPES
+ *
+ * Pipes have two ends but just one direction: to get a two-way
+ * conversation you need two pipes. It&apos;s an error if we cannot make
+ * them both, and we define these macros for easy reference.
+ */
+writepipe[0] = -1;
+
+if ( pipe(readpipe) &lt; 0  ||  pipe(writepipe) &lt; 0 )
+{
+    /* FATAL: cannot create pipe */
+    /* close readpipe[0] &amp; [1] if necessary */
+}
+
+#define PARENT_READ readpipe[0]
+#define CHILD_WRITE readpipe[1]
+#define CHILD_READ  writepipe[0]
+#define PARENT_WRITE    writepipe[1]
+
+if ( (childpid = fork()) &lt; 0)
+{
+    /* FATAL: cannot fork child */
+}
+else if ( childpid == 0 )   /* in the child */
+{
+    close(PARENT_WRITE);
+    close(PARENT_READ);
+
+    dup2(CHILD_READ,  0);  close(CHILD_READ);
+    dup2(CHILD_WRITE, 1);  close(CHILD_WRITE);
+
+    /* do child stuff */
+}
+else                /* in the parent */
+{
+    close(CHILD_READ);
+    close(CHILD_WRITE);
+
+    /* do parent stuff */
+}</code></pre><hr>
+<pre><code>首先fork()创建的进程(&quot;即当前的进程的镜像&quot;),两者的初始状态一样，执行互不干扰。
+另外fork() 复制程序时不是从** #include **处开始复制的，因为fork是把进程当前的情况拷贝一份，所以执行fork()，前面的已经执行完了，fork()只拷贝下一行代码到新进程。</code></pre><hr>
+<pre><code>pipe(int fd[2])函数可以得到两个file descriptors 形成一个单向的pipe,fd[0]固定为读端，fd[1]固定为写端。
+具体可以参考：http://unixwiz.net/techtips/remap-pipe-fds.html</code></pre><hr>
+<pre><code>另外 execv家族有很多，其中的execve()可以控制传进去的envp,env
+int execve(const char *filename, char *const argv[ ], char *const envp[ ]);</code></pre>
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/ctf/">ctf</a>
+    </div>
+
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/pwn/">pwn</a></li></ul>
+    </div>
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+
+
+  
   
 
 </div>
@@ -408,7 +592,7 @@
 
     <script>
         $(document).ready(function() {
-            var backgroundnum = 2;
+            var backgroundnum = 1;
             var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
             $("#mobile-nav").css({"background-image": backgroundimg,"background-size": "cover","background-position": "center"});
             $(".left-col").css({"background-image": backgroundimg,"background-size": "cover","background-position": "center"});
