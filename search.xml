@@ -4,6 +4,31 @@
   
     
     <entry>
+      <title>kernel pwn ret2usr and rop</title>
+      <link href="/2020/02/12/kernel-pwn-ret2usr-and-rop/"/>
+      <url>/2020/02/12/kernel-pwn-ret2usr-and-rop/</url>
+      
+        <content type="html"><![CDATA[<h2 id="info"><a href="#info" class="headerlink" title="info"></a><center>info</center></h2><a id="more"></a>]]></content>
+      
+      
+      <categories>
+          
+          <category> pwn </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> linux kernel pwn </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>angr安装</title>
       <link href="/2020/02/12/angr%E5%AE%89%E8%A3%85/"/>
       <url>/2020/02/12/angr%E5%AE%89%E8%A3%85/</url>
@@ -45,7 +70,7 @@
       
         <tags>
             
-            <tag> 内核pwn </tag>
+            <tag> linux kernel pwn </tag>
             
         </tags>
       
