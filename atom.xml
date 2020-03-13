@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://leave-devour.github.io/"/>
-  <updated>2020-02-14T06:15:57.059Z</updated>
+  <updated>2020-03-13T17:43:53.368Z</updated>
   <id>https://leave-devour.github.io/</id>
   
   <author>
@@ -15,6 +15,29 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>高校战疫的两道kernel</title>
+    <link href="https://leave-devour.github.io/2020/03/14/%E9%AB%98%E6%A0%A1%E6%88%98%E7%96%AB%E7%9A%84%E4%B8%A4%E9%81%93kernel/"/>
+    <id>https://leave-devour.github.io/2020/03/14/%E9%AB%98%E6%A0%A1%E6%88%98%E7%96%AB%E7%9A%84%E4%B8%A4%E9%81%93kernel/</id>
+    <published>2020-03-13T17:43:29.000Z</published>
+    <updated>2020-03-13T17:43:53.368Z</updated>
+    
+    <content type="html"><![CDATA[<center><font size="5">info</font></center><a id="more"></a>]]></content>
+    
+    <summary type="html">
+    
+      &lt;center&gt;&lt;font size=&quot;5&quot;&gt;info&lt;/font&gt;&lt;/center&gt;
+    
+    </summary>
+    
+    
+      <category term="pwn" scheme="https://leave-Devour.github.io/categories/pwn/"/>
+    
+    
+      <category term="kernel" scheme="https://leave-Devour.github.io/tags/kernel/"/>
+    
+  </entry>
   
   <entry>
     <title>AFL安装</title>
