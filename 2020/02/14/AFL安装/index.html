@@ -10,14 +10,14 @@
   <title>AFL安装 | Ordin</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="info">
-<meta name="keywords" content="auto">
+<meta name="keywords" content="Automation">
 <meta property="og:type" content="article">
 <meta property="og:title" content="AFL安装">
 <meta property="og:url" content="https://leave-Devour.github.io/2020/02/14/AFL安装/index.html">
 <meta property="og:site_name" content="Ordin">
 <meta property="og:description" content="info">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-02-14T06:15:57.059Z">
+<meta property="og:updated_time" content="2020-04-02T08:18:17.266Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="AFL安装">
 <meta name="twitter:description" content="info">
@@ -142,7 +142,7 @@
                 
                 <section class="switch-part switch-part2">
                     <div class="widget tagcloud" id="js-tagcloud">
-                        <a href="/tags/auto/" style="font-size: 20px;">auto</a> <a href="/tags/kernel/" style="font-size: 10px;">kernel</a> <a href="/tags/linux-kernel-pwn/" style="font-size: 20px;">linux kernel pwn</a> <a href="/tags/pwnable-kr/" style="font-size: 10px;">pwnable.kr</a> <a href="/tags/reversing-kr/" style="font-size: 10px;">reversing.kr</a>
+                        <a href="/tags/Automation/" style="font-size: 20px;">Automation</a> <a href="/tags/kernel/" style="font-size: 20px;">kernel</a> <a href="/tags/linux-kernel-pwn/" style="font-size: 20px;">linux kernel pwn</a> <a href="/tags/pwnable-kr/" style="font-size: 10px;">pwnable.kr</a> <a href="/tags/reversing-kr/" style="font-size: 10px;">reversing.kr</a>
                     </div>
                 </section>
                 
@@ -239,13 +239,13 @@
       <div class="article-info article-info-post">
         
     <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/Fuzz/">Fuzz</a>
+    <a class="article-category-link" href="/categories/Fuzzing/">Fuzzing</a>
     </div>
 
 
         
     <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/auto/">auto</a></li></ul>
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Automation/">Automation</a></li></ul>
     </div>
 
         <div class="clearfix"></div>
@@ -256,9 +256,10 @@
       
           
         <center><font size="5">info</font></center>
-
 <a id="more"></a>
-<p><code>afl</code>是fuzz里面比较老的一个工具，并且很出名。afl更加侧重于源码编译的c和c++程序。<br>afl通过记录输入样本的代码覆盖率，从而调整输入样本以提高覆盖率，增加发现漏洞的概率，大致流程如下：</p>
+`afl`是fuzz里面比较老的一个工具，并且很出名。afl更加侧重于源码编译的c和c++程序。
+afl通过记录输入样本的代码覆盖率，从而调整输入样本以提高覆盖率，增加发现漏洞的概率，大致流程如下：
+
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">①从源码编译程序时进行插桩，以记录代码覆盖率（Code Coverage）</span><br><span class="line"></span><br><span class="line">②选择一些输入文件，作为初始测试集加入输入队列（queue）</span><br><span class="line"></span><br><span class="line">③将队列中的文件按一定的策略进行“突变”</span><br><span class="line"></span><br><span class="line">④如果经过变异文件更新了覆盖范围，则将其保留添加到队列中</span><br><span class="line"></span><br><span class="line">⑤上述过程会一直循环进行，期间触发了crash的文件会被记录下来</span><br></pre></td></tr></table></figure>
 
 <p>首先在<a href="http://releases.llvm.org/download.html" target="_blank" rel="noopener">llvm</a>里面下载llvm源码<br>一般下载下面4个包就ok</p>
@@ -285,7 +286,7 @@
         <p><span>本文标题:</span><a  href="/2020/02/14/AFL安装/">AFL安装</a></p>
         <p><span>文章作者:</span><a  href="/" title="访问 Ordin 的个人博客">Ordin</a></p>
         <p><span>发布时间:</span>2020年02月14日 - 13时43分</p>
-        <p><span>最后更新:</span>2020年02月14日 - 14时15分</p>
+        <p><span>最后更新:</span>2020年04月02日 - 16时18分</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2020/02/14/AFL安装/" title="AFL安装">https://leave-Devour.github.io/2020/02/14/AFL安装/</a>
             <span class="copy-path" data-clipboard-text="原文: https://leave-Devour.github.io/2020/02/14/AFL安装/　　作者: Ordin" title=""></span>
@@ -406,7 +407,7 @@
             </a>
         
     </div>
-    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2020/03/14/(转载自360安全客)高校战疫的两道kernel/">(转载自360安全客)从高校战疫的两道kernel学习kernel</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/02/14/AFL安装/">AFL安装</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/02/12/kernel-pwn-ret2usr-and-rop/">kernel pwn ret2usr and rop</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/02/12/angr安装/">angr安装</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/02/12/p4fmt-TeaserCONFidence2019-CTF/">p4fmt TeaserCONFidence2019 CTF </a></li><li class="post-list-item"><a class="post-list-link" href="/2019/07/23/reversing-kr-Easy-crack/">Easy_crack</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/07/23/Pwnable-kr-input/">input</a></li></ul>
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2020/04/18/CVE-2017-11176分析/">CVE-2017-11176分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/04/02/Linux-kernel-整数溢出-堆溢出漏洞及其利用与分析/">Linux kernel 整数溢出-堆溢出漏洞及其利用与分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/03/14/(转载自360安全客)高校战疫的两道kernel/">(转载自360安全客)从高校战疫的两道kernel学习kernel</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/02/14/AFL安装/">AFL安装</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/02/12/kernel-pwn-ret2usr-and-rop/">kernel pwn ret2usr and rop</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/02/12/angr安装/">angr安装</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/02/12/p4fmt-TeaserCONFidence2019-CTF/">p4fmt TeaserCONFidence2019 CTF </a></li><li class="post-list-item"><a class="post-list-link" href="/2019/07/23/reversing-kr-Easy-crack/">Easy_crack</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/07/23/Pwnable-kr-input/">input</a></li></ul>
     
 <script src="http://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
 
