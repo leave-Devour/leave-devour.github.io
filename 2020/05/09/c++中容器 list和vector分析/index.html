@@ -7,20 +7,33 @@
   
   
   
-  <title>AFL安装 | Ordin</title>
+  <title>c++中容器 list和vector分析 | Ordin</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="info">
-<meta name="keywords" content="Automation">
 <meta property="og:type" content="article">
-<meta property="og:title" content="AFL安装">
-<meta property="og:url" content="https://leave-Devour.github.io/2020/02/14/AFL安装/index.html">
+<meta property="og:title" content="c++中容器 list和vector分析">
+<meta property="og:url" content="https://leave-Devour.github.io/2020/05/09/c++中容器 list和vector分析/index.html">
 <meta property="og:site_name" content="Ordin">
 <meta property="og:description" content="info">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-04-02T08:18:17.266Z">
+<meta property="og:image" content="https://leave-devour.github.io/images/image-20200509205700006.png">
+<meta property="og:image" content="https://leave-devour.github.io/images/image-20200509205748792.png">
+<meta property="og:image" content="https://leave-devour.github.io/images/image-20200509210008963.png">
+<meta property="og:image" content="https://leave-devour.github.io/images/image-20200509210034161.png">
+<meta property="og:image" content="https://leave-devour.github.io/images/image-20200509210338391.png">
+<meta property="og:image" content="https://leave-devour.github.io/images/image-20200509210528966.png">
+<meta property="og:image" content="https://leave-devour.github.io/images/image-20200509211036999.png">
+<meta property="og:image" content="https://leave-devour.github.io/images/image-20200509212146527.png">
+<meta property="og:image" content="https://leave-devour.github.io/images/image-20200509212257783.png">
+<meta property="og:image" content="https://leave-devour.github.io/images/image-20200509212311699.png">
+<meta property="og:image" content="https://leave-devour.github.io/images/image-20200509212347021.png">
+<meta property="og:image" content="https://leave-devour.github.io/images/image-20200509212400596.png">
+<meta property="og:image" content="https://leave-devour.github.io/images/image-20200509212457340.png">
+<meta property="og:updated_time" content="2020-05-09T13:28:17.845Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="AFL安装">
+<meta name="twitter:title" content="c++中容器 list和vector分析">
 <meta name="twitter:description" content="info">
+<meta name="twitter:image" content="https://leave-devour.github.io/images/image-20200509205700006.png">
   
     <link rel="alternative" href="/atom.xml" title="Ordin" type="application/atom+xml">
   
@@ -211,11 +224,11 @@
         </header>
     </div>
 </nav>
-      <div class="body-wrap"><article id="post-AFL安装" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-c++中容器 list和vector分析" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a  href="/2020/02/14/AFL安装/" class="article-date">
-      <time datetime="2020-02-14T05:43:31.000Z" itemprop="datePublished">2020-02-14</time>
+      <a  href="/2020/05/09/c++中容器 list和vector分析/" class="article-date">
+      <time datetime="2020-05-09T12:51:37.000Z" itemprop="datePublished">2020-05-09</time>
 </a>
 
     </div>
@@ -229,7 +242,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      AFL安装
+      c++中容器 list和vector分析
     </h1>
   
 
@@ -238,16 +251,8 @@
       
       <div class="article-info article-info-post">
         
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/Fuzzing/">Fuzzing</a>
-    </div>
-
 
         
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Automation/">Automation</a></li></ul>
-    </div>
-
         <div class="clearfix"></div>
       </div>
       
@@ -257,24 +262,45 @@
           
         <center><font size="5">info</font></center>
 <a id="more"></a>
-`afl`是fuzz里面比较老的一个工具，并且很出名。afl更加侧重于源码编译的c和c++程序。
-afl通过记录输入样本的代码覆盖率，从而调整输入样本以提高覆盖率，增加发现漏洞的概率，大致流程如下：
 
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">①从源码编译程序时进行插桩，以记录代码覆盖率（Code Coverage）</span><br><span class="line"></span><br><span class="line">②选择一些输入文件，作为初始测试集加入输入队列（queue）</span><br><span class="line"></span><br><span class="line">③将队列中的文件按一定的策略进行“突变”</span><br><span class="line"></span><br><span class="line">④如果经过变异文件更新了覆盖范围，则将其保留添加到队列中</span><br><span class="line"></span><br><span class="line">⑤上述过程会一直循环进行，期间触发了crash的文件会被记录下来</span><br></pre></td></tr></table></figure>
-
-<p>首先在<a href="http://releases.llvm.org/download.html" target="_blank" rel="noopener">llvm</a>里面下载llvm源码<br>一般下载下面4个包就ok</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">LLVM source code (.sig)</span><br><span class="line">Clang source code (.sig)</span><br><span class="line">clang-tools-extra (.sig)</span><br><span class="line">compiler-rt source code (.sig)</span><br></pre></td></tr></table></figure>
-
-<p>然后解压，把名字改掉，放到对应的目录里面就欧克</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mv Clang llvm/tools</span><br><span class="line">mv extra llvm/tools/Clang</span><br><span class="line">mv compiler llvm/project</span><br></pre></td></tr></table></figure>
-
-<p>然后在 另一个目录里面新建一个build文件夹，在里面进行编译，防止代码污染。cmake编译的时候选release编译会比较快，带debug的很慢。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">mkdir build</span><br><span class="line">cd build</span><br><span class="line">cmake -G &quot;Unix Makefiles&quot; -DLLVM_ENABLE_ASSERTIONS=On -DCMAKE_BUILD_TYPE=Release ../llvm</span><br><span class="line">make -j4</span><br><span class="line">make install</span><br></pre></td></tr></table></figure>
-
-<p>装llvm和clang环境就可以开始</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">cd afl</span><br><span class="line">make</span><br><span class="line">install</span><br><span class="line">cd llvm_mode</span><br><span class="line">mkdir test_build</span><br><span class="line">make</span><br><span class="line">cd ..</span><br><span class="line">make install</span><br></pre></td></tr></table></figure>
-
-<p>在编译的时候要用afl-gcc来代替gcc，对程序进行插桩<br><a href="https://xz.aliyun.com/t/1541" target="_blank" rel="noopener">参考链接</a><br><a href="https://blog.csdn.net/Wang_shiling/article/details/80164661" target="_blank" rel="noopener">参考链接</a></p>
+<p>就拿这次De1ctf中的<code>stl_container</code> 作为分析</p>
+<p>首先先分析下list push_back和pop_back</p>
+<hr>
+<p>一个list一般 占3个机器长度，初始化为0</p>
+<p><img src="/images/image-20200509205700006.png" alt="image-20200509205700006"></p>
+<p><img src="/images/image-20200509205748792.png" alt="image-20200509205748792"></p>
+<p>然后把本身的地址放在第一，第二个位置，应该就是首尾指针了</p>
+<p>然后第三个位置就是size初始化为0</p>
+<p>在add一个的时候，</p>
+<p><img src="/images/image-20200509210008963.png" alt="image-20200509210008963"></p>
+<p><img src="/images/image-20200509210034161.png" alt="image-20200509210034161"></p>
+<p>会增加一个node，然后把当前的 首指针和next指针作为一二位，然后put进去的数据作为第三位，这个list，如果list的node，size不够会继续增大，但是这道题只能puts两个，所以初始化的size基本就够用了</p>
+<p>当再put一个数据进去的时候</p>
+<p><img src="/images/image-20200509210338391.png" alt="image-20200509210338391"></p>
+<p>可以很明显的看到引用保存的两个指针和size都发生了变化，第一个指针指向的首node，第二个指针指向上个node，形成单链表</p>
+<p>在pop的时候就直接改引用，然后改size，再free</p>
+<p>而且</p>
+<p><img src="/images/image-20200509210528966.png" alt="image-20200509210528966"></p>
+<p>那么list就到这里</p>
+<hr>
+<p>接下来就是vector</p>
+<p><img src="/images/image-20200509211036999.png" alt="image-20200509211036999"></p>
+<p>vector的初始化，也是全零</p>
+<p>他不像list那样维持一个size来管理整个单链表</p>
+<p>而是通过前两个指针来管理一块内存，这块内存保存着，我们put进去的数据的指针</p>
+<p>put 一个进来</p>
+<p><img src="/images/image-20200509212146527.png" alt="image-20200509212146527"></p>
+<p>可以很明显的看到第一第二个指针相差8</p>
+<p><img src="/images/image-20200509212257783.png" alt="image-20200509212257783"></p>
+<p><img src="/images/image-20200509212311699.png" alt="image-20200509212311699"></p>
+<p>put 第二个</p>
+<p><img src="/images/image-20200509212347021.png" alt="image-20200509212347021"></p>
+<p><img src="/images/image-20200509212400596.png" alt="image-20200509212400596"></p>
+<p>put第三个</p>
+<p><img src="/images/image-20200509212457340.png" alt="image-20200509212457340"></p>
+<p>从上面就能分析得出</p>
+<p>第一个和第二个是维持数据的访问范围，而第三个就是一个边界</p>
+<p>每当第二指针==第三个的时候就就会扩容，但这个扩容的过程是整内存复制过去的。</p>
 
       
     </div>
@@ -283,13 +309,13 @@ afl通过记录输入样本的代码覆盖率，从而调整输入样本以提�
   
     
     <div class="copyright">
-        <p><span>本文标题:</span><a  href="/2020/02/14/AFL安装/">AFL安装</a></p>
+        <p><span>本文标题:</span><a  href="/2020/05/09/c++中容器 list和vector分析/">c++中容器 list和vector分析</a></p>
         <p><span>文章作者:</span><a  href="/" title="访问 Ordin 的个人博客">Ordin</a></p>
-        <p><span>发布时间:</span>2020年02月14日 - 13时43分</p>
-        <p><span>最后更新:</span>2020年04月02日 - 16时18分</p>
+        <p><span>发布时间:</span>2020年05月09日 - 20时51分</p>
+        <p><span>最后更新:</span>2020年05月09日 - 21时28分</p>
         <p>
-            <span>原始链接:</span><a class="post-url" href="/2020/02/14/AFL安装/" title="AFL安装">https://leave-Devour.github.io/2020/02/14/AFL安装/</a>
-            <span class="copy-path" data-clipboard-text="原文: https://leave-Devour.github.io/2020/02/14/AFL安装/　　作者: Ordin" title=""></span>
+            <span>原始链接:</span><a class="post-url" href="/2020/05/09/c++中容器 list和vector分析/" title="c++中容器 list和vector分析">https://leave-Devour.github.io/2020/05/09/c++中容器 list和vector分析/</a>
+            <span class="copy-path" data-clipboard-text="原文: https://leave-Devour.github.io/2020/05/09/c++中容器 list和vector分析/　　作者: Ordin" title=""></span>
         </p>
         <p>
             <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/cn/" title="中国大陆 (CC BY-NC-SA 3.0 CN)" target = "_blank">"署名-非商用-相同方式共享 3.0"</a> 转载请保留原文链接及作者。
@@ -300,18 +326,9 @@ afl通过记录输入样本的代码覆盖率，从而调整输入样本以提�
 
 <nav id="article-nav">
   
-    <a  href="/2020/03/14/(转载自360安全客)高校战疫的两道kernel/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption"><</strong>
-      <div class="article-nav-title">
-        
-          (转载自360安全客)从高校战疫的两道kernel学习kernel
-        
-      </div>
-    </a>
   
-  
-    <a  href="/2020/02/12/kernel-pwn-ret2usr-and-rop/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">kernel pwn ret2usr and rop</div>
+    <a  href="/2020/05/07/De1CTF2020-web复现/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">De1CTF2020 web复现</div>
       <strong class="article-nav-caption">></strong>
     </a>
   
@@ -396,13 +413,11 @@ afl通过记录输入样本的代码覆盖率，从而调整输入样本以提�
 
     <div class="scroll" id="post-nav-button">
         
-            <a  href="/2020/03/14/(转载自360安全客)高校战疫的两道kernel/" title="上一篇: (转载自360安全客)从高校战疫的两道kernel学习kernel">
-                <i class="fa fa-angle-left"></i>
-            </a>
+            <a  href="/" title="回到主页"><i class="fa fa-home"></i></a>
         
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
         
-            <a  href="/2020/02/12/kernel-pwn-ret2usr-and-rop/" title="下一篇: kernel pwn ret2usr and rop">
+            <a  href="/2020/05/07/De1CTF2020-web复现/" title="下一篇: De1CTF2020 web复现">
                 <i class="fa fa-angle-right"></i>
             </a>
         
