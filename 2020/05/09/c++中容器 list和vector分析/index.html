@@ -29,7 +29,7 @@
 <meta property="og:image" content="https://leave-devour.github.io/images/image-20200509212347021.png">
 <meta property="og:image" content="https://leave-devour.github.io/images/image-20200509212400596.png">
 <meta property="og:image" content="https://leave-devour.github.io/images/image-20200509212457340.png">
-<meta property="og:updated_time" content="2020-05-09T13:28:17.845Z">
+<meta property="og:updated_time" content="2020-05-11T20:31:05.133Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="c++中容器 list和vector分析">
 <meta name="twitter:description" content="info">
@@ -301,6 +301,8 @@
 <p>从上面就能分析得出</p>
 <p>第一个和第二个是维持数据的访问范围，而第三个就是一个边界</p>
 <p>每当第二指针==第三个的时候就就会扩容，但这个扩容的过程是整内存复制过去的。</p>
+<p>vector ： vector和built-in数组类似，拥有一段连续的内存空间，能非常好的支持随即存取，即[]操作符，但由于它的内存空间是连续的，所以在中间进行插入和删除会造成内存块的拷贝，另外，当插入较多的元素后，预留内存空间可能不够，需要重新申请一块足够大的内存并把原来的数据拷贝到新的内存空间。</p>
+<p>list：      list就是数据结构中的双向链表(根据sgi stl源代码)，因此它的内存空间是不连续的，通过指针来进行数据的访问，这个特点使得它的随即存取变的非常没有效率，因此它没有提供[]操作符的重载。但由于链表的特点，它可以以很好的效率支持任意地方的删除和插入。</p>
 
       
     </div>
@@ -312,7 +314,7 @@
         <p><span>本文标题:</span><a  href="/2020/05/09/c++中容器 list和vector分析/">c++中容器 list和vector分析</a></p>
         <p><span>文章作者:</span><a  href="/" title="访问 Ordin 的个人博客">Ordin</a></p>
         <p><span>发布时间:</span>2020年05月09日 - 20时51分</p>
-        <p><span>最后更新:</span>2020年05月09日 - 21时28分</p>
+        <p><span>最后更新:</span>2020年05月12日 - 04时31分</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2020/05/09/c++中容器 list和vector分析/" title="c++中容器 list和vector分析">https://leave-Devour.github.io/2020/05/09/c++中容器 list和vector分析/</a>
             <span class="copy-path" data-clipboard-text="原文: https://leave-Devour.github.io/2020/05/09/c++中容器 list和vector分析/　　作者: Ordin" title=""></span>
