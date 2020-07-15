@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://leave-devour.github.io/"/>
-  <updated>2020-05-11T18:14:23.267Z</updated>
+  <updated>2020-07-15T01:28:28.766Z</updated>
   <id>https://leave-devour.github.io/</id>
   
   <author>
@@ -15,6 +15,25 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>虚拟机扩容</title>
+    <link href="https://leave-devour.github.io/2020/07/15/%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%89%A9%E5%AE%B9/"/>
+    <id>https://leave-devour.github.io/2020/07/15/%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%89%A9%E5%AE%B9/</id>
+    <published>2020-07-15T01:02:21.000Z</published>
+    <updated>2020-07-15T01:28:28.766Z</updated>
+    
+    <content type="html"><![CDATA[<center><font size="5">info</font></center><a id="more"></a><p>1、先在设置里面扩容，但在扩容前是不能有快照的，好像。。</p><p>2、启动虚拟机，然后往下面的步骤执行</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">1、先拍个快照</span><br><span class="line">2、sudo fdisk /dev/sda 查看分区情况</span><br><span class="line">3、关闭交换分区</span><br><span class="line">sudo swapoff /dev/sda5</span><br><span class="line">4、sudo fdisk /dev/sda</span><br><span class="line">从后往上一个个删掉</span><br><span class="line">d</span><br><span class="line">index</span><br><span class="line">5、重新建立分区</span><br><span class="line">n</span><br><span class="line">p</span><br><span class="line">回车</span><br><span class="line">你要的大小，最好留点给交换分区</span><br><span class="line">这个创建的是根分区</span><br><span class="line">6、创建新的扩展分区</span><br><span class="line">n</span><br><span class="line">e</span><br><span class="line">回车</span><br><span class="line">回车</span><br><span class="line">7、在创建交换分区</span><br><span class="line">n</span><br><span class="line">回车</span><br><span class="line">回车</span><br><span class="line">回车</span><br><span class="line">t</span><br><span class="line">5</span><br><span class="line">82</span><br><span class="line">8、设置启动分区</span><br><span class="line">a</span><br><span class="line">1</span><br><span class="line">9、sudo reboot</span><br><span class="line">10、sudo resize2fs /dev/sda1</span><br></pre></td></tr></table></figure>]]></content>
+    
+    <summary type="html">
+    
+      &lt;center&gt;&lt;font size=&quot;5&quot;&gt;info&lt;/font&gt;&lt;/center&gt;
+    
+    </summary>
+    
+    
+    
+  </entry>
   
   <entry>
     <title>2020年网鼎杯pwn 复现</title>
